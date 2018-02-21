@@ -2,6 +2,9 @@
 # Define CMake policy to be used on the project
 cmake_minimum_required( VERSION 2.4 )
 cmake_policy( VERSION ${CMAKE_VERSION} )
+#--------------------------------------------------------------------------------------------
+# The project name
+project(ARoS_ROS_interface)
 
 set( HOME $ENV{MAINPROJECT} )
 #set(HOME C:/Work/Repository)
@@ -10,8 +13,18 @@ set( LIB_BIN_DIR C:/Work/Repository/Libraries_bin )
 include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
 
 #--------------------------------------------------------------------------------------------
-# The project name
-project( ARoS_ROS_interface)
+# ROS and ROSDEPS directories
+set( ROS_INCLUDE $ENV{ROS_INCLUDE} )
+set( ROS_LIB $ENV{ROS_LIB} )
+set( ROSDEPS_INCLUDE $ENV{ROSDEPS_INCLUDE} )
+set( ROSDEPS_LIB $ENV{ROSDEPS_LIB} )
+#--------------------------------------------------------------------------------------------
+# Boost Library
+#set(BOOST_ROOT C:/local/boost_1_57_0)
+#set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib32-msvc-10.0)
+#set(BOOST_INCLUDEDIR ${BOOST_ROOT}/boost)
+#set(Boost_DEBUG ON)
+find_package(Boost REQUIRED thread)
 
 #--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project
@@ -48,9 +61,18 @@ project( ARoS_ROS_interface)
 		${SRC_DIRS}
 		${INCLUDE_DIRS}
 		${CMAKE_SOURCE_DIR}/res
+		${ROS_INCLUDE}
+		${ROSDEPS_INCLUDE}
+		${Boost_INCLUDE_DIRS}
 		#${LIBRARIES_DIR}/TypesDefs
 		#${LIBRARIES_DIR}/Utilities
 
+	)
+	
+	link_directories(
+		${ROS_LIB}
+		${ROSDEPS_LIB}
+		${Boost_LIBRARY_DIRS}
 	)
 		
 #--------------------------------------------------------------------------------------------
@@ -126,6 +148,10 @@ project( ARoS_ROS_interface)
 #--------------------------------------------------------------------------------------------
 # Required Libraries to be linked with the executable
 	
-	#target_link_libraries( ${PROJECT_NAME}
-	#	YarpCommunication
-	#)
+	target_link_libraries( ${PROJECT_NAME}
+		roscpp.lib
+		roslib.lib
+		rostime.lib
+		rosconsole.lib
+		roscpp_serialization.lib
+	)
