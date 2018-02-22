@@ -24,12 +24,14 @@ public:
 // Overrides
 public:
 	virtual BOOL InitInstance();
+	CWinThread* m_pThread[5];
 
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnAboutArosinterface();
 	afx_msg void OnRosconnectGgg();
+	
 };
 
 extern CARoS_ros_interfaceApp theApp;

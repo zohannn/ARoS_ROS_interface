@@ -20,11 +20,7 @@ set( ROSDEPS_INCLUDE $ENV{ROSDEPS_INCLUDE} )
 set( ROSDEPS_LIB $ENV{ROSDEPS_LIB} )
 #--------------------------------------------------------------------------------------------
 # Boost Library
-#set(BOOST_ROOT C:/local/boost_1_57_0)
-#set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib32-msvc-10.0)
-#set(BOOST_INCLUDEDIR ${BOOST_ROOT}/boost)
-#set(Boost_DEBUG ON)
-find_package(Boost REQUIRED thread)
+find_package(Boost)
 
 #--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project

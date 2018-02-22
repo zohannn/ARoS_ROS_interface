@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Node.h"
 
 // CARoS_ros_interfaceDlg dialog
 class CARoS_ros_interfaceDlg : public CDialogEx
@@ -29,4 +30,5 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
 };

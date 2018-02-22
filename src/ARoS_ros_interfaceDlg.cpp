@@ -2,6 +2,7 @@
 // ARoS_ros_interfaceDlg.cpp : implementation file
 //
 
+
 #include "../include/stdafx.h"
 #include "../include/ARoS_ros_interface.h"
 #include "../include/ARoS_ros_interfaceDlg.h"
@@ -11,41 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-
-// CAboutDlg dialog used for App About
-
-class CAboutDlg : public CDialogEx
-{
-public:
-	CAboutDlg();
-
-// Dialog Data
-	enum { IDD = IDD_ABOUTBOX };
-
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-// Implementation
-protected:
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
-{
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-END_MESSAGE_MAP()
-
-
 // CARoS_ros_interfaceDlg dialog
-
-
 
 
 CARoS_ros_interfaceDlg::CARoS_ros_interfaceDlg(CWnd* pParent /*=NULL*/)
@@ -106,7 +73,8 @@ void CARoS_ros_interfaceDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
-		CAboutDlg dlgAbout;
+		//CAboutDlg dlgAbout;
+		CAbout_AROS_ros_dlg dlgAbout;
 		dlgAbout.DoModal();
 	}
 	else

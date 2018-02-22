@@ -2,6 +2,7 @@
 // ARoS_ros_interface.cpp : Defines the class behaviors for the application.
 //
 
+#include <iostream>
 #include "../include/stdafx.h"
 #include "../include/ARoS_ros_interface.h"
 #include "../include/ARoS_ros_interfaceDlg.h"
@@ -14,7 +15,7 @@
 // CARoS_ros_interfaceApp
 
 BEGIN_MESSAGE_MAP(CARoS_ros_interfaceApp, CWinApp)
-	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	//ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 	ON_COMMAND(ID_ABOUT_AROSINTERFACE, &CARoS_ros_interfaceApp::OnAboutArosinterface)
 	ON_COMMAND(ID_ROSCONNECT_GGG, &CARoS_ros_interfaceApp::OnRosconnectGgg)
 END_MESSAGE_MAP()
@@ -90,6 +91,15 @@ void CARoS_ros_interfaceApp::OnAboutArosinterface()
 
 void CARoS_ros_interfaceApp::OnRosconnectGgg()
 {
-    CROS_Comm_dlg dlg;
-	dlg.DoModal();
+    //CROS_Comm_dlg dlg;
+	//dlg.DoModal();
+	//for(int i=0;i<5;i++){
+		theApp.m_pThread[0]=AfxBeginThread(RUNTIME_CLASS(CNode));
+	//}
+
 }
+
+
+
+
+
