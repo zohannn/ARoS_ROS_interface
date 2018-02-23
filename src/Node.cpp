@@ -12,10 +12,13 @@ IMPLEMENT_DYNCREATE(CNode, CWinThread)
 
 CNode::CNode()
 {
+
 }
 
 CNode::~CNode()
 {
+	on_end();
+    //wait();
 }
 
 BOOL CNode::InitInstance()
@@ -24,14 +27,63 @@ BOOL CNode::InitInstance()
 	//m_pMainWnd = new CROS_Comm_dlg;
 	//m_pMainWnd->SetForegroundWindow();
 	//m_pMainWnd->ShowWindow(SW_SHOW);
+	
 	return TRUE;
+}
+
+bool CNode::on_init()
+{
+   node_name = _T("ARoS");
+   ros::init(__argc,__argv,node_name.GetString());
+	if ( ! ros::master::check() ) {
+		return false;
+	}
+    ros::start();
+    //start();
+	ResumeThread();
+	//WaitForSingleObject(m_hThread,INFINITE); // wait and do not go to run()
+	return true;
+}
+
+bool CNode::on_init(CString master,CString ip)
+{
+	node_name = _T("ARoS");
+	std::map<std::string,std::string> remappings;
+	remappings["__master"] = master.GetString();
+	remappings["__hostname"] = ip.GetString();
+	ros::init(remappings,node_name.GetString());
+	if ( ! ros::master::check() ) {
+		return false;
+	}
+    ros::start();
+    //start();
+	ResumeThread();
+	//WaitForSingleObject(m_hThread,INFINITE); // wait and do not go to run()
+	return true;
+}
+
+bool CNode::on_end()
+{
+	if(ros::isStarted()){
+		ros::shutdown();
+		return ros::isShuttingDown();
+	}else{
+		return true;
+	}
 }
 
 int CNode::Run()
 {
-	//while(true){
-	TRACE(_T("Run called\n"));		
-	//}
+	
+	//TRACE(_T("Run called\n"));		
+	//ros::Rate loop_rate(0.5);
+    //ros::NodeHandle node;
+
+    while ( ros::ok() ) {} // infinite loop while ros is running
+
+    ros::spinOnce(); // handles ROS messages
+    //std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
+    //Q_EMIT rosShutdown(); // used to signal the gui for a shutdown (useful to roslaunch)
 	return 0; 
 }
 
@@ -47,8 +99,22 @@ void CNode::setNodeName(CString name)
 }
 int CNode::ExitInstance()
 {
-	// TODO:  eseguire la pulitura dei singoli thread
+	on_end();
 	return CWinThread::ExitInstance();
+}
+
+const char * CNode::WinGetEnv(const char * name)
+{
+    const DWORD buffSize = 65535;
+    static char buffer[buffSize];
+    if (GetEnvironmentVariableA(name, buffer, buffSize))
+    {
+        return buffer;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 BEGIN_MESSAGE_MAP(CNode, CWinThread)

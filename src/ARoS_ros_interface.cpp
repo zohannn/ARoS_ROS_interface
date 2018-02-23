@@ -26,6 +26,23 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
+	ros_node = new CNode();
+	ros_node->CreateThread(CREATE_SUSPENDED);
+	ros_node->m_bAutoDelete=false;
+	//ros_node = (CNode*)AfxBeginThread(RUNTIME_CLASS(CNode));
+
+	ros_comm_dlg.setROSNode(ros_node);
+
+	b_connected = false;
+	b_env_vars = true;
+	ros_master = _T("Enter the ROS_MASTER_URI");
+	ros_ip = _T("IP address of this PC");
+
+}
+
+CARoS_ros_interfaceApp::~CARoS_ros_interfaceApp()
+{
+
 }
 
 
@@ -74,30 +91,53 @@ BOOL CARoS_ros_interfaceApp::InitInstance()
 		delete pShellManager;
 	}
 
+	if(ros_node!=NULL){
+		delete(ros_node);
+		//delete ros_node;
+		//ros_node = NULL;
+	}
+
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
 	return FALSE;
 }
 
+/*
+BOOL CARoS_ros_interfaceApp::ExitInstance()
+{
+	CWinApp::ExitInstance();
+
+	return FALSE;
+
+}
+*/
+
 
 
 void CARoS_ros_interfaceApp::OnAboutArosinterface()
 {
-	CAbout_AROS_ros_dlg dlg;
-	dlg.DoModal();
+	
+	about_dlg.DoModal();
 }
 
 
 void CARoS_ros_interfaceApp::OnRosconnectGgg()
 {
-    CROS_Comm_dlg dlg;
-	dlg.DoModal();
-	//for(int i=0;i<5;i++){
-	//theApp.m_pThread =AfxBeginThread(RUNTIME_CLASS(CNode));
-	//theApp.m_pThread = AfxBeginThread(RUNTIME_CLASS(CNode));
-	//}
-
-
+	if(b_connected){
+		ros_comm_dlg.strStatus=_T("connected");
+		ros_comm_dlg.strButtonConnect=_T("Disconnect");
+	}else{
+		ros_comm_dlg.strStatus=_T("disconnected");
+		ros_comm_dlg.strButtonConnect=_T("Connect");
+	}
+	ros_comm_dlg.setEnvVars(b_env_vars);
+	ros_comm_dlg.setMasterURI(ros_master);
+	ros_comm_dlg.setROSIP(ros_ip);
+	ros_comm_dlg.DoModal();
+	b_connected = ros_comm_dlg.getROSConn();
+	b_env_vars = ros_comm_dlg.getEnvVars();
+	ros_master = ros_comm_dlg.getMasterURI();
+	ros_ip =ros_comm_dlg.getROSIP();
 }
 
 

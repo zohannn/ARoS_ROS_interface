@@ -5,6 +5,7 @@ cmake_policy( VERSION ${CMAKE_VERSION} )
 #--------------------------------------------------------------------------------------------
 # The project name
 project(ARoS_ROS_interface)
+set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 
 set( HOME $ENV{MAINPROJECT} )
 #set(HOME C:/Work/Repository)

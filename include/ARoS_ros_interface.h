@@ -21,12 +21,20 @@ class CARoS_ros_interfaceApp : public CWinApp
 {
 public:
 	CARoS_ros_interfaceApp();
+	~CARoS_ros_interfaceApp();
 
 // Overrides
 public:
 	virtual BOOL InitInstance();
+	//virtual BOOL ExitInstance();
 	//CWinThread* m_pThread;
-	CNode* ros_node;
+	CNode* ros_node; // ros node of the network
+	CROS_Comm_dlg ros_comm_dlg; // ros communication dialog
+	CAbout_AROS_ros_dlg about_dlg; // about dialog
+	bool b_connected; // true if the node is connected to the ROS master, false otherwise
+	bool b_env_vars; // true if environment variables have been used to connect to ROS
+	CString ros_master; // ROS MASTER URI
+	CString ros_ip; // ROS IP
 
 // Implementation
 
