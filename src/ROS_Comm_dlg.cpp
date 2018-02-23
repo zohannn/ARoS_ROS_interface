@@ -1,6 +1,6 @@
 // ROS_Comm_dlg.cpp : file di implementazione
 //
-#include <iostream>
+
 #include "../include/stdafx.h"
 #include "../include/ARoS_ros_interface.h"
 #include "../include/ROS_Comm_dlg.h"
@@ -122,5 +122,5 @@ void CROS_Comm_dlg::OnBnClickedButtonConnect()
 {
 	// TODO: aggiungere qui il codice per la gestione della notifica del controllo.
 
-	std::cout<< "pushed" << std::endl;
+}
 }

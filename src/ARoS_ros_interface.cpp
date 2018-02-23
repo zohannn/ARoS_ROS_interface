@@ -2,7 +2,6 @@
 // ARoS_ros_interface.cpp : Defines the class behaviors for the application.
 //
 
-#include <iostream>
 #include "../include/stdafx.h"
 #include "../include/ARoS_ros_interface.h"
 #include "../include/ARoS_ros_interfaceDlg.h"
@@ -97,16 +96,7 @@ void CARoS_ros_interfaceApp::OnRosconnectGgg()
 	//theApp.m_pThread =AfxBeginThread(RUNTIME_CLASS(CNode));
 	//theApp.m_pThread = AfxBeginThread(RUNTIME_CLASS(CNode));
 	//}
-	/*
-	ros_node = new CNode();
-	ros_node->CreateThread(CREATE_SUSPENDED);
-	ros_node->m_bAutoDelete=false; // don't delete it automatically
-	ros_node->setNodeName(_T("aros"));
 
-
-	WaitForSingleObject(ros_node->m_hThread,INFINITE);
-	delete ros_node;
-	*/
 
 }
 
