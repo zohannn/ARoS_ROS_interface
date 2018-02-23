@@ -1,6 +1,6 @@
 // ROS_Comm_dlg.cpp : file di implementazione
 //
-
+#include <iostream>
 #include "../include/stdafx.h"
 #include "../include/ARoS_ros_interface.h"
 #include "../include/ROS_Comm_dlg.h"
@@ -18,7 +18,17 @@ CROS_Comm_dlg::CROS_Comm_dlg(CWnd* pParent /*=NULL*/)
 	, m_ROS_IP_txt(_T("IP address of this PC"))
 	, m_ros_connected(false)
 {
+	//Create(IDD_ROS_COMM_DIALOG,NULL);
+}
 
+CROS_Comm_dlg::CROS_Comm_dlg(CWnd* pParent,CNode* node)
+	: CDialogEx(CROS_Comm_dlg::IDD, pParent)
+	, m_ROS_MASTER_txt(_T("Enter the ROS_MASTER_URI"))
+	, m_check_env_vars(FALSE)
+	, m_ROS_IP_txt(_T("IP address of this PC"))
+	, m_ros_connected(false)
+{
+	//Create(IDD_ROS_COMM_DIALOG,NULL);
 }
 
 CROS_Comm_dlg::~CROS_Comm_dlg()
@@ -111,4 +121,6 @@ void CROS_Comm_dlg::OnBnClickedCheckEnvVars()
 void CROS_Comm_dlg::OnBnClickedButtonConnect()
 {
 	// TODO: aggiungere qui il codice per la gestione della notifica del controllo.
+
+	std::cout<< "pushed" << std::endl;
 }

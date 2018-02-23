@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-
+#include "Node.h"
 
 // finestra di dialogo CROS_Comm_dlg
 
@@ -10,6 +10,7 @@ class CROS_Comm_dlg : public CDialogEx
 
 public:
 	CROS_Comm_dlg(CWnd* pParent = NULL);   // costruttore standard
+	CROS_Comm_dlg(CWnd* pParent,CNode* node);
 	virtual ~CROS_Comm_dlg();
 
 // Dati della finestra di dialogo

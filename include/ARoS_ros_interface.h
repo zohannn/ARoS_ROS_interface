@@ -11,6 +11,7 @@
 #include "resource.h"		// main symbols
 #include "About_AROS_ros_interface.h"
 #include "ROS_Comm_dlg.h"
+#include "Node.h"
 
 // CARoS_ros_interfaceApp:
 // See ARoS_ros_interface.cpp for the implementation of this class
@@ -24,12 +25,15 @@ public:
 // Overrides
 public:
 	virtual BOOL InitInstance();
+	//CWinThread* m_pThread;
+	CNode* ros_node;
 
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnAboutArosinterface();
 	afx_msg void OnRosconnectGgg();
+	
 };
 
 extern CARoS_ros_interfaceApp theApp;
