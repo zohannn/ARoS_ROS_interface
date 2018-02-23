@@ -123,4 +123,3 @@ void CROS_Comm_dlg::OnBnClickedButtonConnect()
 	// TODO: aggiungere qui il codice per la gestione della notifica del controllo.
 
 }
-}
