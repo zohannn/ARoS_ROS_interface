@@ -139,10 +139,10 @@ void CARoS_ros_interfaceApp::OnRosconnectGgg()
 
 	if(b_connected)
 	{
-		main_dlg.m_log_list.AddString(_T("Node connected to the ROS Master"));
+		main_dlg.m_log_list.AddString(_T("Node is connected to the ROS Master"));
 	}else
 	{
-		main_dlg.m_log_list.AddString(_T("Node NOT connected to the ROS Master"));
+		main_dlg.m_log_list.AddString(_T("Node is NOT connected to the ROS Master"));
 	}
 }
 
