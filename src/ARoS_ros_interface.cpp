@@ -4,7 +4,6 @@
 
 #include "../include/stdafx.h"
 #include "../include/ARoS_ros_interface.h"
-#include "../include/ARoS_ros_interfaceDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -71,9 +70,8 @@ BOOL CARoS_ros_interfaceApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	CARoS_ros_interfaceDlg dlg;
-	m_pMainWnd = &dlg;
-	INT_PTR nResponse = dlg.DoModal();
+	m_pMainWnd = &main_dlg;
+	INT_PTR nResponse = main_dlg.DoModal();
 	if (nResponse == IDOK)
 	{
 		// TODO: Place code here to handle when the dialog is
@@ -138,6 +136,14 @@ void CARoS_ros_interfaceApp::OnRosconnectGgg()
 	b_env_vars = ros_comm_dlg.getEnvVars();
 	ros_master = ros_comm_dlg.getMasterURI();
 	ros_ip =ros_comm_dlg.getROSIP();
+
+	if(b_connected)
+	{
+		main_dlg.m_log_list.AddString(_T("Node connected to the ROS Master"));
+	}else
+	{
+		main_dlg.m_log_list.AddString(_T("Node NOT connected to the ROS Master"));
+	}
 }
 
 

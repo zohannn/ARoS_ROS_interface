@@ -24,6 +24,7 @@ CARoS_ros_interfaceDlg::CARoS_ros_interfaceDlg(CWnd* pParent /*=NULL*/)
 void CARoS_ros_interfaceDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST1, m_log_list);
 }
 
 BEGIN_MESSAGE_MAP(CARoS_ros_interfaceDlg, CDialogEx)

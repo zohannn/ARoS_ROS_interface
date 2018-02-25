@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Node.h"
+#include "afxwin.h"
 
 // CARoS_ros_interfaceDlg dialog
 class CARoS_ros_interfaceDlg : public CDialogEx
@@ -31,4 +32,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
+public:
+	// logging list variable
+	CListBox m_log_list;
 };

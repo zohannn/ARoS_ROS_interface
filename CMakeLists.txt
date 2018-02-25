@@ -21,7 +21,7 @@ set( ROSDEPS_INCLUDE $ENV{ROSDEPS_INCLUDE} )
 set( ROSDEPS_LIB $ENV{ROSDEPS_LIB} )
 #--------------------------------------------------------------------------------------------
 # Boost Library
-find_package(Boost)
+find_package(Boost REQUIRED log)
 
 #--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project

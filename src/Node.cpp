@@ -12,7 +12,9 @@ IMPLEMENT_DYNCREATE(CNode, CWinThread)
 
 CNode::CNode()
 {
-
+	// logging
+    init_log();
+    logging::add_common_attributes();
 }
 
 CNode::~CNode()
@@ -115,6 +117,23 @@ const char * CNode::WinGetEnv(const char * name)
     {
         return 0;
     }
+}
+
+void CNode::init_log()
+{
+	logging::add_file_log
+    (
+        keywords::file_name = "QNode_%N.log",                                        /*< file name pattern >*/
+        keywords::rotation_size = 10 * 1024 * 1024,                                   /*< rotate files every 10 MiB... >*/
+        keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0,0,0), /*< ...or at midnight >*/
+        keywords::format = "[%TimeStamp%]: %Message%",                                 /*< log record format >*/
+        keywords::target = "Boost_logs"
+    );
+
+    logging::core::get()->set_filter
+    (
+        logging::trivial::severity >= logging::trivial::info
+    );
 }
 
 BEGIN_MESSAGE_MAP(CNode, CWinThread)
