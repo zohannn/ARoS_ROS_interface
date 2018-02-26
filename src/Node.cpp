@@ -80,19 +80,67 @@ int CNode::Run()
 	//TRACE(_T("Run called\n"));		
 	//ros::Rate loop_rate(0.5);
     //ros::NodeHandle node;
+    while ( ros::ok() ) {
 
-    while ( ros::ok() ) {} // infinite loop while ros is running
+
+		ros::spinOnce(); // handles ROS messages
+	
+	} // infinite loop while ros is running
 
     ros::spinOnce(); // handles ROS messages
+	on_end();
     //std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
     //Q_EMIT rosShutdown(); // used to signal the gui for a shutdown (useful to roslaunch)
 	return 0; 
+}
+
+UINT publishChat (LPVOID pParam)
+{
+  int count = 0;
+  ros::Rate loop_rate(10);
+
+  CNode* node = (CNode*)pParam;
+  ros::Publisher pub = node->getPublisher();
+  while (ros::ok())
+  {
+    /**
+     * This is a message object. You stuff it with data, and then publish it.
+     */
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "hello world " << count;
+    msg.data = ss.str();
+
+    //ROS_INFO("%s", msg.data.c_str());
+
+    /**
+     * The publish() function is how you send messages. The parameter
+     * is the message object. The type of this object must agree with the type
+     * given as a template parameter to the advertise<>() call, as was done
+     * in the constructor above.
+     */
+    pub.publish(msg);
+
+    ros::spinOnce();
+
+    loop_rate.sleep();
+    ++count;
+  }
+
+  return 0;
+
 }
 
 
 CString CNode::getNodeName()
 {
 	return node_name;
+}
+
+ros::Publisher CNode::getPublisher()
+{
+	return pubChat;
 }
 
 void CNode::setNodeName(CString name)
@@ -135,6 +183,34 @@ void CNode::init_log()
         logging::trivial::severity >= logging::trivial::info
     );
 }
+
+void CNode::chatterCallback(const std_msgs::String::ConstPtr& msg)
+{
+	//ROS_INFO("I heard: [%s]", msg->data.c_str());
+	CString str_init("I heard: ");
+	CString str_data(msg->data.c_str());
+	CString str = str_init + str_data;
+	sig_log(str);
+}
+
+void CNode::listen()
+{	
+	ros::NodeHandle handle_node; // handle of the ROS node
+	subChat = handle_node.subscribe("chatter",1000,&CNode::chatterCallback,this);
+}
+
+
+
+void CNode::advertise(CString topic)
+{
+
+	ros::NodeHandle handle_node; // handle of the ROS node
+	pubChat = handle_node.advertise<std_msgs::String>(topic.GetString(), 1000);
+
+	AfxBeginThread(publishChat,this);
+
+}
+
 
 BEGIN_MESSAGE_MAP(CNode, CWinThread)
 END_MESSAGE_MAP()

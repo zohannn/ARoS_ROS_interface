@@ -31,11 +31,15 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 	//ros_node = (CNode*)AfxBeginThread(RUNTIME_CLASS(CNode));
 
 	ros_comm_dlg.setROSNode(ros_node);
+	main_dlg.setROSNode(ros_node);
 
 	b_connected = false;
 	b_env_vars = true;
 	ros_master = _T("Enter the ROS_MASTER_URI");
 	ros_ip = _T("IP address of this PC");
+
+	// signals
+	ros_node->sig_log.connect(boost::bind(&CARoS_ros_interfaceDlg::addLogLine,&main_dlg,_1));
 
 }
 
@@ -137,13 +141,16 @@ void CARoS_ros_interfaceApp::OnRosconnectGgg()
 	ros_master = ros_comm_dlg.getMasterURI();
 	ros_ip =ros_comm_dlg.getROSIP();
 
+	CString status;
 	if(b_connected)
 	{
-		main_dlg.m_log_list.AddString(_T("Node is connected to the ROS Master"));
+		status = _T("Node is connected to the ROS Master");
 	}else
 	{
-		main_dlg.m_log_list.AddString(_T("Node is NOT connected to the ROS Master"));
+		status = _T("Node is NOT connected to the ROS Master");
 	}
+	main_dlg.addLogLine(status);
+
 }
 
 

@@ -31,6 +31,8 @@ BEGIN_MESSAGE_MAP(CARoS_ros_interfaceDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_LISTEN, &CARoS_ros_interfaceDlg::OnBnClickedButtonListen)
+	ON_BN_CLICKED(IDC_BUTTON_TALK, &CARoS_ros_interfaceDlg::OnBnClickedButtonTalk)
 END_MESSAGE_MAP()
 
 
@@ -118,5 +120,30 @@ void CARoS_ros_interfaceDlg::OnPaint()
 HCURSOR CARoS_ros_interfaceDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+void CARoS_ros_interfaceDlg::OnBnClickedButtonListen()
+{
+	node->listen();
+}
+
+void CARoS_ros_interfaceDlg::OnBnClickedButtonTalk()
+{
+	node->advertise(_T("chatter1"));
+}
+
+void CARoS_ros_interfaceDlg::setROSNode(CNode* r)
+{
+	node = r;
+}
+
+CNode* CARoS_ros_interfaceDlg::getROSNode()
+{
+	return node;
+}
+
+void CARoS_ros_interfaceDlg::addLogLine(CString str)
+{
+	m_log_list.AddString(str);
 }
 

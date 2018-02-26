@@ -1,8 +1,9 @@
 #pragma once
 
-
+// ROS includes
 #include <ros\ros.h>
-#include <ros\network.h> 
+#include <ros\network.h>
+#include <std_msgs/String.h>
 
 // Logging
 #include <boost/log/core.hpp>
@@ -13,6 +14,9 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
+
+// Signals
+#include <boost/signal.hpp>
 
 // CNode
 namespace logging = boost::log;
@@ -41,11 +45,15 @@ public:
 	int Run();
 	CString getNodeName();
 	void setNodeName(CString name);
-
+	void listen();
+	void advertise(CString topic);
+	boost::signal< void(CString) > sig_log;
+	ros::Publisher getPublisher();
 	
 	/**
     * @brief This enumerator is used for logging functionalities
     */
+	/*
 	enum LogLevel {
 	         Debug,
 	         Info,
@@ -53,6 +61,7 @@ public:
 	         Error,
 	         Fatal
 	 };
+	 */
 
     /**
         * @brief This method return the list of loggings
@@ -74,6 +83,10 @@ protected:
 private:
 	CString node_name;
 	void init_log();
+	void chatterCallback(const std_msgs::String::ConstPtr& msg);
+	ros::Subscriber subChat; /**< ROS subscriber for information about /chatter */
+	ros::Publisher pubChat;
+
 
 };
 

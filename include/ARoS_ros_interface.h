@@ -8,6 +8,8 @@
 	#error "include 'stdafx.h' before including this file for PCH"
 #endif
 
+#include <boost\bind.hpp>
+
 #include "resource.h"		// main symbols
 #include "About_AROS_ros_interface.h"
 #include "ROS_Comm_dlg.h"
