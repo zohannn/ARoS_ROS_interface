@@ -9,7 +9,7 @@ set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 
 find_package( Boost REQUIRED )
 set(SERIAL_ASIO_ROOT $ENV{SERIAL_ASIO_ROOT})
-#set(SERIAL_ASIO_ROOT C:/serial_asio)
+#set(SERIAL_ASIO_ROOT C:/serial_asio/install)
 include_directories( 
 	${Boost_INCLUDE_DIRS}
 	${SERIAL_ASIO_ROOT}/include

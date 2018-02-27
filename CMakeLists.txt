@@ -40,7 +40,7 @@ set( ROSDEPS_INCLUDE $ENV{ROSDEPS_INCLUDE} )
 set( ROSDEPS_LIB $ENV{ROSDEPS_LIB} )
 #--------------------------------------------------------------------------------------------
 # Boost Library
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED log signals)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -49,10 +49,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 	set( LIBRARIES_DIR ${HOME}/Libraries )
 	set( HARDWARE_DIR ${HOME}/Hardware )
 
-#--------------------------------------------------------------------------------------------
-# Configuration of necessary packages	
-	
-	#Configure_Package( YARP )
 	
 #--------------------------------------------------------------------------------------------
 # Other projects that are required to be compiled
