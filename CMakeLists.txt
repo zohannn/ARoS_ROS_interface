@@ -9,9 +9,28 @@ set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 
 set( HOME $ENV{MAINPROJECT} )
 #set(HOME C:/Work/Repository)
-set( LIB_BIN_DIR C:/Work/Repository/Libraries_bin )
+set( LIB_BIN_DIR ${HOME}/Libraries_bin )
 
 include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
+
+#--------------------------------------------------------------------------------------------
+# Libraries dependencies
+add_subdirectory(UpperLimb)
+add_subdirectory(PanTilt)
+
+# Project dependencies include directories
+include_directories(
+	${UpperLimb_INCLUDE_DIRS}
+	${PanTilt_INCLUDE_DIRS}
+)
+
+
+# Project dependencies link directories
+include_directories(
+	${UpperLimb_LIBRARY_DIRS}
+	${PanTilt_LIBRARY_DIRS}
+)
+
 
 #--------------------------------------------------------------------------------------------
 # ROS and ROSDEPS directories
@@ -21,7 +40,9 @@ set( ROSDEPS_INCLUDE $ENV{ROSDEPS_INCLUDE} )
 set( ROSDEPS_LIB $ENV{ROSDEPS_LIB} )
 #--------------------------------------------------------------------------------------------
 # Boost Library
-find_package(Boost REQUIRED log signals)
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 
 #--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project
@@ -59,8 +80,7 @@ find_package(Boost REQUIRED log signals)
 		${INCLUDE_DIRS}
 		${CMAKE_SOURCE_DIR}/res
 		${ROS_INCLUDE}
-		${ROSDEPS_INCLUDE}
-		${Boost_INCLUDE_DIRS}
+		${ROSDEPS_INCLUDE}		
 		#${LIBRARIES_DIR}/TypesDefs
 		#${LIBRARIES_DIR}/Utilities
 
@@ -69,7 +89,6 @@ find_package(Boost REQUIRED log signals)
 	link_directories(
 		${ROS_LIB}
 		${ROSDEPS_LIB}
-		${Boost_LIBRARY_DIRS}
 	)
 		
 #--------------------------------------------------------------------------------------------
@@ -136,11 +155,6 @@ find_package(Boost REQUIRED log signals)
 # Create an executable for the application
 	add_executable( ${PROJECT_NAME} WIN32 ${Project_App_SRCS} )
 	# add_executable( ${PROJECT_NAME} ${Project_App_SRCS} ) #Console program
-#--------------------------------------------------------------------------------------------
-# Configure project dependencies of other projects and respective libraries
-	
-	#add_definitions( -DUSE_YarpCommunication )
-	#add_dependencies( ${PROJECT_NAME} YarpCommunication )
 	
 #--------------------------------------------------------------------------------------------
 # Required Libraries to be linked with the executable
@@ -151,4 +165,6 @@ find_package(Boost REQUIRED log signals)
 		rostime.lib
 		rosconsole.lib
 		roscpp_serialization.lib
+		UpperLimb
+		PanTilt
 	)
