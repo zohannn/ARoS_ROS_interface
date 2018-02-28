@@ -1,6 +1,6 @@
 #include "CommunicationServerPanTilt.h"
 #include "MathDefines.h"
-#include "../pantilt_ptud46/pantilt_definitions.h"
+#include <pantilt_definitions.h>
 #include "PanTiltWrapper_defs.h"
 #include <iostream>
 

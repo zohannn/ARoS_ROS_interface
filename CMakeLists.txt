@@ -17,18 +17,21 @@ include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
 # Libraries dependencies
 add_subdirectory(UpperLimb)
 add_subdirectory(PanTilt)
+add_subdirectory(VisionBot)
 
 # Project dependencies include directories
 include_directories(
 	${UpperLimb_INCLUDE_DIRS}
 	${PanTilt_INCLUDE_DIRS}
+	${VisionBot_INCLUDE_DIRS}
 )
 
 
 # Project dependencies link directories
-include_directories(
+link_directories(
 	${UpperLimb_LIBRARY_DIRS}
 	${PanTilt_LIBRARY_DIRS}
+	${VisionBot_LIBRARY_DIRS}
 )
 
 

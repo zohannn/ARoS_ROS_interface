@@ -3,14 +3,8 @@ cmake_policy( VERSION ${CMAKE_VERSION} )
 
 project( UpperLimb )
 
-#libs dependencies
-add_subdirectory(amtec_lwa_7dof)
-add_subdirectory(barrett_hand_826X)
-add_subdirectory(Amtec_PStepServer)
-
 
 #--------------------------------------------------------------------------------------------
-
 #3rd party dependencies
 #set(Boost_DEBUG ON)
 #set(Boost_USE_STATIC_LIBS ON)
@@ -18,8 +12,11 @@ find_package( Boost REQUIRED)
 include_directories( ${Boost_INCLUDE_DIRS} )
 link_directories( ${Boost_LIBRARY_DIRS} )
 
-
 #--------------------------------------------------------------------------------------------
+#libs dependencies
+add_subdirectory(amtec_lwa_7dof)
+add_subdirectory(barrett_hand_826X)
+add_subdirectory(Amtec_PStepServer)
 
 #Project dependencies include directories
 include_directories(
@@ -31,10 +28,11 @@ include_directories(
 
 
 #Project dependencies link directories
-link_directories(${amtec_lwa_7dof_LIBRARY_DIRS})
-link_directories(${barrett_hand_826X_LIBRARY_DIRS})
-link_directories(${Amtec_PStepServer_LIBRARY_DIRS})
-
+link_directories(
+	${amtec_lwa_7dof_LIBRARY_DIRS}
+	${barrett_hand_826X_LIBRARY_DIRS}
+	${Amtec_PStepServer_LIBRARY_DIRS}
+)
 
 #--------------------------------------------------------------------------------------------
 
@@ -81,7 +79,7 @@ set(${PROJECT_NAME}_LIBRARY_DIRS
 								${PROJECT_SOURCE_DIR}/lib
     CACHE INTERNAL "${PROJECT_NAME}: Libraries Directories" FORCE)
 	
-add_library(UpperLimb STATIC ${myApp_SRCS})
+add_library(${PROJECT_NAME} STATIC ${myApp_SRCS})
 
 target_link_libraries(UpperLimb amtec_lwa_7dof barrett_hand_826X Amtec_PStepServer)
 

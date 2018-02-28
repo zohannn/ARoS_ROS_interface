@@ -1,7 +1,7 @@
 #ifndef _GRASD_AMTEC_DEFINITIONS_H_
 #define _GRASD_AMTEC_DEFINITIONS_H_
 
-#include "common/m5apiw32.h"
+#include <m5apiw32.h>
 
 namespace Amtec
 {
