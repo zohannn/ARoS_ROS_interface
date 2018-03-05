@@ -3,7 +3,17 @@ This is a MFC program for ROS interface for the humanoid robot ARoS (compatibili
 
 Installation steps:
 
-	1. Install ROS: http://gianpaologulletta.blogspot.pt/2017/06/installation-of-ros-hydro-on-windows-xp.html
+	1. Compile and install ROS: http://gianpaologulletta.blogspot.pt/2017/06/installation-of-ros-hydro-on-windows-xp.html
+	
+	2. Extract the ACE wrappers (https://mega.nz/#!wSoFxaCA!cpuLKVLSxyzDJSDtcCF2ZOfETHAJbn-tHniDmJA0Wio) into C:\local\ACE_wrappers.
+	Define the environment variables ACE_ROOT = C:\local\ACE_wrappers and ACE_LIB = %ACE_ROOT%\lib. Put them in the PATH.
+	
+	3. Compile and install YARP (https://mega.nz/#!dfZESIIB!sgKvIa3w7rOGO3quw-NvBdpl2txHDZrxBigxkEejRkM). CMake the program with the following options:
+		a. uncheck CREATE_YMANAGER
+		b. uncheck YARP_COMPILE_TESTS 
+		c. set CMAKE_INSTALL_PREFIX = C:\local\YARP
+	Define the environment variable YARP_ROOT = C:\local\YARP and put %YARP_ROOT%\bin %YARP_ROOT%\include and %YARP_ROOT%\lib in the  PATH
+	Compile and install YARP with visual studio 2010.
 	
 	2. Download the serial port drivers (https://mega.nz/#!kS4iHTSC!FMfBAI2wxRQZj8LiDA2L6SfS7yTwFhPARnennLDiCnQ) under C:\serial_asio. 
 	Define the environment variableS SERIAL_ASIO_ROOT=C:\serial_asio\install, SERIAL_ASIO_INCLUDE=%SERIAL_ASIO_ROOT%\include and SERIAL_ASIO_LIB=%SERIAL_ASIO_ROOT%\lib. Put them in the path. 

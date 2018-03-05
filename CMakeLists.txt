@@ -14,25 +14,25 @@ set( LIB_BIN_DIR ${HOME}/Libraries_bin )
 include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
 
 #--------------------------------------------------------------------------------------------
-# Libraries dependencies
-add_subdirectory(UpperLimb)
-add_subdirectory(PanTilt)
-add_subdirectory(VisionBot)
+# # Libraries dependencies
+# add_subdirectory(UpperLimb)
+# add_subdirectory(PanTilt)
+# add_subdirectory(VisionBot)
 
-# Project dependencies include directories
-include_directories(
-	${UpperLimb_INCLUDE_DIRS}
-	${PanTilt_INCLUDE_DIRS}
-	${VisionBot_INCLUDE_DIRS}
-)
+# # Project dependencies include directories
+# include_directories(
+	# ${UpperLimb_INCLUDE_DIRS}
+	# ${PanTilt_INCLUDE_DIRS}
+	# ${VisionBot_INCLUDE_DIRS}
+# )
 
 
-# Project dependencies link directories
-link_directories(
-	${UpperLimb_LIBRARY_DIRS}
-	${PanTilt_LIBRARY_DIRS}
-	${VisionBot_LIBRARY_DIRS}
-)
+# # Project dependencies link directories
+# link_directories(
+	# ${UpperLimb_LIBRARY_DIRS}
+	# ${PanTilt_LIBRARY_DIRS}
+	# ${VisionBot_LIBRARY_DIRS}
+# )
 
 
 #--------------------------------------------------------------------------------------------
@@ -80,8 +80,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 		${CMAKE_SOURCE_DIR}/res
 		${ROS_INCLUDE}
 		${ROSDEPS_INCLUDE}		
-		#${LIBRARIES_DIR}/TypesDefs
-		#${LIBRARIES_DIR}/Utilities
 
 	)
 	
@@ -164,6 +162,4 @@ link_directories(${Boost_LIBRARY_DIRS})
 		rostime.lib
 		rosconsole.lib
 		roscpp_serialization.lib
-		UpperLimb
-		PanTilt
 	)
