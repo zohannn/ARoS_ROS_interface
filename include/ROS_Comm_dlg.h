@@ -1,6 +1,7 @@
 #pragma once
 #include "afxwin.h"
 #include "Node.h"
+#include <boost\shared_ptr.hpp>
 
 // finestra di dialogo CROS_Comm_dlg
 

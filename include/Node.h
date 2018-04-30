@@ -46,7 +46,7 @@ public:
 	CString getNodeName();
 	void setNodeName(CString name);
 	void listen();
-	void advertise(CString topic);
+	void advertise(std::string topic);
 	boost::signal< void(CString) > sig_log;
 	ros::Publisher getPublisher();
 	

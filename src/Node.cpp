@@ -13,8 +13,8 @@ IMPLEMENT_DYNCREATE(CNode, CWinThread)
 CNode::CNode()
 {
 	// logging
-    init_log();
-    logging::add_common_attributes();
+    //init_log();
+    //logging::add_common_attributes();
 }
 
 CNode::~CNode()
@@ -36,7 +36,7 @@ BOOL CNode::InitInstance()
 bool CNode::on_init()
 {
    node_name = _T("ARoS");
-   ros::init(__argc,__argv,node_name.GetString());
+   ros::init(__argc,__argv,"ARoS");
 	if ( ! ros::master::check() ) {
 		return false;
 	}
@@ -51,9 +51,9 @@ bool CNode::on_init(CString master,CString ip)
 {
 	node_name = _T("ARoS");
 	std::map<std::string,std::string> remappings;
-	remappings["__master"] = master.GetString();
-	remappings["__hostname"] = ip.GetString();
-	ros::init(remappings,node_name.GetString());
+	remappings["__master"] = CT2A(master);
+	remappings["__hostname"] = CT2A(ip);
+	ros::init(remappings,"ARoS");
 	if ( ! ros::master::check() ) {
 		return false;
 	}
@@ -171,7 +171,7 @@ void CNode::init_log()
 {
 	logging::add_file_log
     (
-        keywords::file_name = "QNode_%N.log",                                        /*< file name pattern >*/
+        keywords::file_name = "ros_Node_%N.log",                                        /*< file name pattern >*/
         keywords::rotation_size = 10 * 1024 * 1024,                                   /*< rotate files every 10 MiB... >*/
         keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0,0,0), /*< ...or at midnight >*/
         keywords::format = "[%TimeStamp%]: %Message%",                                 /*< log record format >*/
@@ -201,11 +201,11 @@ void CNode::listen()
 
 
 
-void CNode::advertise(CString topic)
+void CNode::advertise(std::string topic)
 {
 
 	ros::NodeHandle handle_node; // handle of the ROS node
-	pubChat = handle_node.advertise<std_msgs::String>(topic.GetString(), 1000);
+	pubChat = handle_node.advertise<std_msgs::String>(topic, 1000);
 
 	AfxBeginThread(publishChat,this);
 

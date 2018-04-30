@@ -41,8 +41,8 @@ BOOL CROS_Comm_dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_buttonConnect.SetWindowTextA(strButtonConnect);
-	m_ros_conn.SetWindowTextA(strStatus);
+	m_buttonConnect.SetWindowTextW(strButtonConnect);
+	m_ros_conn.SetWindowTextW(strStatus);
 
 	if(m_check_env_vars){
 		m_edit_master_uri.EnableWindow(FALSE);
@@ -160,7 +160,7 @@ void CROS_Comm_dlg::OnBnClickedButtonConnect()
 	UpdateData(TRUE);
 
 	CString caption;
-	m_buttonConnect.GetWindowTextA(caption);
+	m_buttonConnect.GetWindowTextW(caption);
 
 	if (caption.Compare(_T("Connect"))==0){
 		// I want to connect
@@ -170,18 +170,18 @@ void CROS_Comm_dlg::OnBnClickedButtonConnect()
 			m_edit_ros_ip.EnableWindow(FALSE);
             if ( !node->on_init() ) {
                 showNoMasterMessage();                
-				m_buttonConnect.SetWindowTextA(_T("Connect"));
+				m_buttonConnect.SetWindowTextW(_T("Connect"));
                 //m_check_env_vars=true;
 
                 node->on_end();
                 status = _T("Node disconnected from ROS");
-				m_ros_conn.SetWindowTextA(_T("disconnected"));
+				m_ros_conn.SetWindowTextW(_T("disconnected"));
                 m_ros_connected=false;
             } else {
                 //m_check_env_vars=false;
-				m_buttonConnect.SetWindowTextA(_T("Disconnect"));
+				m_buttonConnect.SetWindowTextW(_T("Disconnect"));
                 status = "Node connected to ROS";
-				m_ros_conn.SetWindowTextA(_T("connected"));
+				m_ros_conn.SetWindowTextW(_T("connected"));
                 m_ros_connected=true;
 
                 //qnode->log(QNode::Info,status);
@@ -192,19 +192,19 @@ void CROS_Comm_dlg::OnBnClickedButtonConnect()
 			m_edit_ros_ip.EnableWindow(TRUE);
             if (!node->on_init(m_ROS_MASTER_txt,m_ROS_IP_txt)){
                 showNoMasterMessage();                
-				m_buttonConnect.SetWindowTextA(_T("Connect"));
+				m_buttonConnect.SetWindowTextW(_T("Connect"));
                 //m_check_env_vars=true;
 
                 node->on_end();
                 status = _T("Node disconnected from ROS");
-				m_ros_conn.SetWindowTextA(_T("disconnected"));
+				m_ros_conn.SetWindowTextW(_T("disconnected"));
                 m_ros_connected=false;
 
             } else {
                 //m_check_env_vars=false;
-				m_buttonConnect.SetWindowTextA(_T("Disconnect"));
+				m_buttonConnect.SetWindowTextW(_T("Disconnect"));
                 status = "Node connected to ROS";
-				m_ros_conn.SetWindowTextA(_T("connected"));
+				m_ros_conn.SetWindowTextW(_T("connected"));
                 m_ros_connected=true;
 
                 //qnode->log(QNode::Info,status);
@@ -213,12 +213,12 @@ void CROS_Comm_dlg::OnBnClickedButtonConnect()
 		}
 	}else{
 // I want to disconnect
-			m_buttonConnect.SetWindowTextA(_T("Connect"));
+			m_buttonConnect.SetWindowTextW(_T("Connect"));
             //m_check_env_vars=true;
 
             node->on_end();
             status = _T("Node disconnected from ROS");
-			m_ros_conn.SetWindowTextA(_T("disconnected"));
+			m_ros_conn.SetWindowTextW(_T("disconnected"));
             m_ros_connected=false;
 
         //node->log(QNode::Info,status);

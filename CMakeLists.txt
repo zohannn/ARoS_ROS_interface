@@ -5,13 +5,16 @@ cmake_policy( VERSION ${CMAKE_VERSION} )
 #--------------------------------------------------------------------------------------------
 # The project name
 project(ARoS_ROS_interface)
-set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
+## set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 
 set( HOME $ENV{MAINPROJECT} )
+set (VLD $ENV{VLD_ROOT} )
 #set(HOME C:/Work/Repository)
-set( LIB_BIN_DIR ${HOME}/Libraries_bin )
+#set( LIB_BIN_DIR ${HOME}/Libraries_bin )
+#include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
 
-include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
+set( LIBRARIES_DIR ${HOME}/Libraries )
+include( ${LIBRARIES_DIR}/CMakeScripts/CommonScripts.cmake )
 
 #--------------------------------------------------------------------------------------------
 # # Libraries dependencies
@@ -43,26 +46,20 @@ set( ROSDEPS_INCLUDE $ENV{ROSDEPS_INCLUDE} )
 set( ROSDEPS_LIB $ENV{ROSDEPS_LIB} )
 #--------------------------------------------------------------------------------------------
 # Boost Library
-find_package(Boost REQUIRED log signals)
+find_package(Boost REQUIRED log_setup log thread signals)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
 #--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project
-	set( LIBRARIES_DIR ${HOME}/Libraries )
-	set( HARDWARE_DIR ${HOME}/Hardware )
+set( LIBRARIES_DIR ${HOME}/Libraries )
+set( HARDWARE_DIR ${HOME}/Hardware )
 
 	
 #--------------------------------------------------------------------------------------------
-# Other projects that are required to be compiled
-
-
-	#set( MatrixBin_DIR ${LIB_BIN_DIR}/Matrix )
-	#find_package( MatrixBin REQUIRED )
-
-	#set( YarpCommunicationBin_DIR ${LIB_BIN_DIR}/YarpCommunication )
-	#find_package( YarpCommunicationBin REQUIRED )
-
+# YARP
+Configure_Package(YARP)
+Configure_Package(YarpCommunication)
 #--------------------------------------------------------------------------------------------
 # Definition of include directories
 
@@ -80,12 +77,13 @@ link_directories(${Boost_LIBRARY_DIRS})
 		${CMAKE_SOURCE_DIR}/res
 		${ROS_INCLUDE}
 		${ROSDEPS_INCLUDE}		
-
+		${VLD}
 	)
 	
 	link_directories(
 		${ROS_LIB}
 		${ROSDEPS_LIB}
+		${VLD}
 	)
 		
 #--------------------------------------------------------------------------------------------
@@ -155,6 +153,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 	
 #--------------------------------------------------------------------------------------------
 # Required Libraries to be linked with the executable
+
+	Link_libraries_to_project()
 	
 	target_link_libraries( ${PROJECT_NAME}
 		roscpp.lib
