@@ -135,6 +135,10 @@ public:
 
 	// load a task
 	bool loadTask(CString file_name);
+	
+	//divide the task in micro steps
+	void divideTask(unsigned int n_micro_steps);
+
 	// types of movement
 	enum movementType
 	{
@@ -159,6 +163,7 @@ public:
 		std::vector<int> stage_sizes; // size of each stage
 	};
 	std::vector<movement> task; // task to execute 
+	std::vector<movement> task_micro; // task with micro steps to execute 
 
 	bool execTask(bool pos); // execute the task
 
