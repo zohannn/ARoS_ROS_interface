@@ -1015,11 +1015,11 @@ bool CARoS_ros_interfaceDlg::loadTask(CString file_name)
 			GetDlgItemText(IDC_EDIT_MICRO,value_text);
 			int micro_step_factor = _ttoi(value_text);
 			this->divideTask(micro_step_factor);
-			task = task_micro;
+			this->task = this->task_micro;
 			
 
 			// upload the looking positions
-			int scene = 0; // scene = 0: toy vehicle scenario, scene = 1: drinking service scenario
+			int scene = 2; // scene = 0: toy vehicle scenario, scene = 1: drinking service scenario, scene = 2 : natural obstacle avoidance
 			std::vector<float> look(3);
 			switch(scene)
 			{
@@ -1059,6 +1059,16 @@ bool CARoS_ros_interfaceDlg::loadTask(CString file_name)
 						look_pos.push_back(look);
 					}
 					break;
+
+				case 2: // natural obstacle avoidance
+						// pick
+						look.at(0) = 86.93f; look.at(1) = 0.0f; look.at(2) = 130.60f;
+						look_pos.push_back(look);
+						// place 
+						look.at(0) = 100.0f; look.at(1) = 0.0f; look.at(2) = 130.0f;
+						look_pos.push_back(look);
+
+					break;
 				default:
 					break;
 			}
@@ -1095,106 +1105,104 @@ void CARoS_ros_interfaceDlg::onBnClickedExecTask()
 
  void CARoS_ros_interfaceDlg::divideTask(unsigned int n_micro_steps)
  {
-    task_micro.clear();
-
-	for(int i=0; i<task.size(); ++i)
-	{
-		//current movement
-		movement mov = task.at(i);
-		// movement to create
-		movement mov_micro;
-
-		// multiply the size of each stage
-		mov_micro.stage_sizes.resize(mov.stage_sizes.size());
-		for(int j=0; j < mov.stage_sizes.size(); ++j)
+	if(n_micro_steps>0){
+		this->task_micro.clear();
+		for(size_t i=0; i<task.size(); ++i)
 		{
-			if(j==mov.stage_sizes.size()-1)
+			//current movement
+			movement mov = task.at(i);
+			// movement to create
+			movement mov_micro;
+
+			// type of the movement
+			mov_micro.mov_type = mov.mov_type;
+			// type of stages
+			mov_micro.stages = mov.stages;
+
+			// position, velocity and acceleration
+			std::vector<float> j_pos_init = mov.j_pos_traj.at(0);
+			std::vector<float> j_vel_init = mov.j_vel_traj.at(0);
+			std::vector<float> j_acc_init = mov.j_acc_traj.at(0);
+			float timesteps_micro_init = (j_pos_init.back())/(n_micro_steps+1);
+			j_pos_init.at(j_pos_init.size()-1) = timesteps_micro_init;
+			j_vel_init.at(j_vel_init.size()-1) = timesteps_micro_init;
+			j_acc_init.at(j_acc_init.size()-1) = timesteps_micro_init;
+			mov_micro.j_pos_traj.push_back(j_pos_init);
+			mov_micro.j_vel_traj.push_back(j_vel_init);
+			mov_micro.j_acc_traj.push_back(j_acc_init);
+			mov_micro.time_steps.push_back(timesteps_micro_init);
+			for(size_t j=0; j<mov.j_pos_traj.size()-1; ++j)
 			{
-				if(n_micro_steps==1)
+				std::vector<float> j_pos_j = mov.j_pos_traj.at(j);
+				std::vector<float> j_pos_j1 = mov.j_pos_traj.at(j+1);
+				std::vector<float> j_vel_j = mov.j_vel_traj.at(j);
+				std::vector<float> j_vel_j1 = mov.j_vel_traj.at(j+1);
+				std::vector<float> j_acc_j = mov.j_acc_traj.at(j);
+				std::vector<float> j_acc_j1 = mov.j_acc_traj.at(j+1);
+
+				float timesteps_micro_j = (j_pos_j.back())/(n_micro_steps+1);
+				float timesteps_micro_j1 = (j_pos_j1.back())/(n_micro_steps+1);
+				j_pos_j.at(j_pos_j.size()-1) = timesteps_micro_j; 
+				j_pos_j1.at(j_pos_j1.size()-1) = timesteps_micro_j1; 
+				j_vel_j.at(j_vel_j.size()-1) = timesteps_micro_j; 
+				j_vel_j1.at(j_vel_j1.size()-1) = timesteps_micro_j1; 
+				j_acc_j.at(j_acc_j.size()-1) = timesteps_micro_j; 
+				j_acc_j1.at(j_acc_j1.size()-1) = timesteps_micro_j1; 
+				for(int k=1;k<=n_micro_steps;++k)
 				{
-					mov_micro.stage_sizes.at(j) = (mov.stage_sizes.at(j) * n_micro_steps);
-				}else{
-					mov_micro.stage_sizes.at(j) = (mov.stage_sizes.at(j) * n_micro_steps)-(n_micro_steps-1);
-				}
-			}else{
-				mov_micro.stage_sizes.at(j) = mov.stage_sizes.at(j) * n_micro_steps;
-			}
-		}
-		mov_micro.stages = mov.stages;
-		mov_micro.mov_type = mov.mov_type;
-		if(n_micro_steps==1)
-		{
-			mov_micro.time_steps.resize((mov.time_steps.size() * n_micro_steps));
-			mov_micro.j_pos_traj.resize((mov.j_pos_traj.size() * n_micro_steps));
-			mov_micro.j_vel_traj.resize((mov.j_vel_traj.size() * n_micro_steps));
-			mov_micro.j_acc_traj.resize((mov.j_acc_traj.size() * n_micro_steps));
-		}else{
-			mov_micro.time_steps.resize((mov.time_steps.size() * n_micro_steps)-(n_micro_steps-1));
-			mov_micro.j_pos_traj.resize((mov.j_pos_traj.size() * n_micro_steps)-(n_micro_steps-1));
-			mov_micro.j_vel_traj.resize((mov.j_vel_traj.size() * n_micro_steps)-(n_micro_steps-1));
-			mov_micro.j_acc_traj.resize((mov.j_acc_traj.size() * n_micro_steps)-(n_micro_steps-1));
-		}
-
-		for(int k=0; k<mov.time_steps.size(); ++k)
-		{
-			std::vector<float> j_pos_curr = mov.j_pos_traj.at(k); j_pos_curr.at(j_pos_curr.size()-1) /= n_micro_steps;
-			std::vector<float> j_vel_curr = mov.j_vel_traj.at(k); j_vel_curr.at(j_pos_curr.size()-1) /= n_micro_steps;
-			std::vector<float> j_acc_curr = mov.j_acc_traj.at(k); j_acc_curr.at(j_pos_curr.size()-1) /= n_micro_steps;
-			
-			std::vector<float> j_pos_next;
-			std::vector<float> j_vel_next;
-			std::vector<float> j_acc_next;
-			
-			if(k < mov.time_steps.size()-1)
-			{
-				j_pos_next = mov.j_pos_traj.at(k+1);
-				j_vel_next = mov.j_vel_traj.at(k+1);
-				j_acc_next = mov.j_acc_traj.at(k+1);
-			}
-
-			mov_micro.j_pos_traj.at(n_micro_steps*k) = j_pos_curr;
-			mov_micro.j_vel_traj.at(n_micro_steps*k) = j_vel_curr;
-			mov_micro.j_acc_traj.at(n_micro_steps*k) = j_acc_curr;
-
-			int c = 0;
-			for(int h=(n_micro_steps*k); h<(n_micro_steps+n_micro_steps*k); ++h)
-			{
-				if(k < mov.time_steps.size() - 1)
-				{
-					mov_micro.time_steps.at(h) = mov.time_steps.at(k)/n_micro_steps;
-				}
-
-				if((h > n_micro_steps*k) && (k < mov.time_steps.size()-1))
-				{
-					
-
-					std::vector<float> j_pos_h(j_pos_curr.size());
-					std::vector<float> j_vel_h(j_vel_curr.size());
-					std::vector<float> j_acc_h(j_acc_curr.size());
-					for(int ii=0; ii < j_pos_curr.size()-1; ++ii)
+					std::vector<float> j_pos_k(j_pos_j.size());
+					std::vector<float> j_vel_k(j_vel_j.size());
+					std::vector<float> j_acc_k(j_acc_j.size());
+					for(size_t h=0; h<j_pos_j.size()-1; ++h)
 					{
-						float delta_pos = j_pos_next.at(ii) - j_pos_curr.at(ii);
-						float delta_vel = j_vel_next.at(ii) - j_vel_curr.at(ii);
-						float delta_acc = j_acc_next.at(ii) - j_acc_curr.at(ii);
+						j_pos_k.at(h) = j_pos_j.at(h) + (j_pos_j1.at(h)-j_pos_j.at(h))*k/(n_micro_steps+1);
+						j_vel_k.at(h) = j_vel_j.at(h) + (j_vel_j1.at(h)-j_vel_j.at(h))*k/(n_micro_steps+1);
+						j_acc_k.at(h) = j_acc_j.at(h) + (j_acc_j1.at(h)-j_acc_j.at(h))*k/(n_micro_steps+1);
+					}// for loop variables				
+					j_pos_k.at(j_pos_k.size()-1) = timesteps_micro_j1;
+					j_vel_k.at(j_vel_k.size()-1) = timesteps_micro_j1;
+					j_acc_k.at(j_acc_k.size()-1) = timesteps_micro_j1;
+					mov_micro.j_pos_traj.push_back(j_pos_k);
+					mov_micro.j_vel_traj.push_back(j_vel_k);
+					mov_micro.j_acc_traj.push_back(j_acc_k);
+					mov_micro.time_steps.push_back(timesteps_micro_j1);
+				} // for loop microsteps
+				mov_micro.j_pos_traj.push_back(j_pos_j1);
+				mov_micro.j_vel_traj.push_back(j_vel_j1);
+				mov_micro.j_acc_traj.push_back(j_acc_j1);
+				mov_micro.time_steps.push_back(timesteps_micro_j1);
+			}// for loop steps
 
-						j_pos_h.at(ii) =  j_pos_curr.at(ii) + (delta_pos/n_micro_steps) * c;
-						j_vel_h.at(ii) =  j_vel_curr.at(ii) + (delta_vel/n_micro_steps) * c;
-						j_acc_h.at(ii) =  j_acc_curr.at(ii) + (delta_acc/n_micro_steps) * c;
-					
-					}
-					j_pos_h.at(j_pos_h.size()-1) = j_pos_next.at(j_pos_next.size()-1)/n_micro_steps;
-					j_vel_h.at(j_vel_h.size()-1) = j_vel_next.at(j_vel_next.size()-1)/n_micro_steps;
-					j_acc_h.at(j_acc_h.size()-1) = j_acc_next.at(j_acc_next.size()-1)/n_micro_steps;
-
-					mov_micro.j_pos_traj.at(h) =  j_pos_h;
-					mov_micro.j_vel_traj.at(h) =  j_vel_h;
-					mov_micro.j_acc_traj.at(h) =  j_acc_h;					
+			// multiply the size of each stage
+			mov_micro.stage_sizes.resize(mov.stage_sizes.size());
+			for(size_t ss=0; ss<mov.stage_sizes.size(); ++ss)
+			{
+				mov_micro.stage_sizes.at(ss) = mov.stage_sizes.at(ss)*(n_micro_steps+1) - n_micro_steps;
+			} // for loop size of each stage
+			
+			//delete extra steps
+			for(size_t ss=0; ss<mov.stage_sizes.size()-1; ++ss)
+			{
+				int stage_size = mov_micro.stage_sizes.at(ss);
+				int prev_stage_size=0;
+				if(ss!=0)
+				{
+					prev_stage_size=mov_micro.stage_sizes.at(ss-1);
 				}
-				c++;
-			} //h			
-		} //k
-		task_micro.push_back(mov_micro);
-	}// i
+				mov_micro.j_pos_traj.erase(mov_micro.j_pos_traj.begin()+prev_stage_size+stage_size,
+											mov_micro.j_pos_traj.begin()+prev_stage_size+stage_size+n_micro_steps);
+				mov_micro.j_vel_traj.erase(mov_micro.j_vel_traj.begin()+prev_stage_size+stage_size,
+											mov_micro.j_vel_traj.begin()+prev_stage_size+stage_size+n_micro_steps);
+				mov_micro.j_acc_traj.erase(mov_micro.j_acc_traj.begin()+prev_stage_size+stage_size,
+											mov_micro.j_acc_traj.begin()+prev_stage_size+stage_size+n_micro_steps);			
+			}
+
+			// add the movement to the task
+			task_micro.push_back(mov_micro);
+		}// for loop task
+	}else{
+		this->task_micro = this->task;
+	}
 }
 
 bool CARoS_ros_interfaceDlg::execTask(bool pos)
