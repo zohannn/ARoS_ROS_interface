@@ -115,6 +115,13 @@ Configure_Package(YarpCommunication)
 	# Create a list with resource files
 	file( GLOB RESOURCE_FILES "res/*.rc*" "res/*.ico" )
 	
+	# Exclude all source and header files in build folder
+	file( GLOB_RECURSE FILES_TO_REMOVE ${CMAKE_CURRENT_BINARY_DIR}/*.* )
+	list( REMOVE_ITEM HEADER_FILES ${FILES_TO_REMOVE} )
+	list( REMOVE_ITEM SOURCE_FILES ${FILES_TO_REMOVE} )
+	list( REMOVE_ITEM RESOURCE_FILES ${FILES_TO_REMOVE} )
+
+	
 	Create_File_Groups(  "${HEADER_FILES}" "${SOURCE_FILES}" "${RESOURCE_FILES}" )
 
 #--------------------------------------------------------------------------------------------
