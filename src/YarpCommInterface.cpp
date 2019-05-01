@@ -17,7 +17,7 @@ CYarpCommInterface::CYarpCommInterface( const std::string name, const std::strin
 	joint_states_connected=false;
 	joint_states_opened=false;
 	yarp_name = name;
-	yarp_name_receiver = yarp_name+"/joint_states_receiver";
+	yarp_name_joints_state_receiver = yarp_name+"/joint_states_receiver";
 
 	// max angular velocities
 	w_max.push_back(52.2f*DEG_TO_RAD_F); //joint 0
@@ -87,13 +87,13 @@ void CYarpCommInterface::init_logging()
 bool CYarpCommInterface::start_joint_states_recever(std::string sender_name)
 {
 	if(!joint_states_opened)
-		joint_states_opened = joint_states_in_port.open(yarp_name_receiver);
+		joint_states_opened = joint_states_in_port.open(yarp_name_joints_state_receiver);
 
 	if(joint_states_opened)
 	{
 		stop_receiver = false;
 		yarp_name_sender = sender_name;
-		joint_states_connected = yarp::os::Network::connect(yarp_name_sender,yarp_name_receiver);
+		joint_states_connected = yarp::os::Network::connect(yarp_name_sender,yarp_name_joints_state_receiver);
 		if(joint_states_connected){
 			joint_states_receiver_thd = boost::thread(boost::bind(&CYarpCommInterface::joint_states_receiver_job, this));
 		}else{ return false;}
@@ -105,7 +105,7 @@ bool CYarpCommInterface::start_joint_states_recever(std::string sender_name)
 void CYarpCommInterface::stop_joint_states_receiver()
 {
 	stop_receiver = true;
-	joint_states_connected = !yarp::os::Network::disconnect(yarp_name_sender,yarp_name_receiver);
+	joint_states_connected = !yarp::os::Network::disconnect(yarp_name_sender,yarp_name_joints_state_receiver);
 	boost::unique_lock<boost::mutex> lck(joint_states_queue_mtx);
 	while(!joint_states_queue.empty()){joint_states_queue.pop();}
 	joint_states_queue_cv.notify_all();
@@ -695,13 +695,54 @@ bool CYarpCommInterface::inRange(float a,float b, float x)
 bool CYarpCommInterface::lookAtPosition(float dX, float dY, float dZ)
 {
 	CMessage msgOut;
-	msgOut.uCommand = VISION_BOT_AROS_PAN_TILT_INTERFACE;
-	msgOut.uParam.assign(1,PANTILT_AROS_LOOK_AT_POSITION);
+	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_AROS_PAN_TILT_INTERFACE;
+	msgOut.uParam.assign(1,PANTILT_Command::PANTILT_AROS_LOOK_AT_POSITION);
 	msgOut.fData.push_back(dX);
 	msgOut.fData.push_back(dY);
 	msgOut.fData.push_back(dZ);
+	return Send(msgOut);			
+}
+
+bool CYarpCommInterface::getVisionInfo()
+{
+	//GREEN COLUMN
+	bool gc_pos = getObjectPos(OBJECT_COLUMN_1); 
+	bool gc_or = getObjectOr(OBJECT_COLUMN_1); 
+	//RED COLUMN
+	bool rc_pos = getObjectPos(OBJECT_COLUMN_2);
+	bool rc_or = getObjectOr(OBJECT_COLUMN_2); 
+	//MAGENTA COLUMN
+	bool mc_pos = getObjectPos(OBJECT_COLUMN_3);
+	bool mc_or = getObjectOr(OBJECT_COLUMN_3); 
+	//BLUE COLUMN
+	bool bc_pos = getObjectPos(OBJECT_COLUMN_4);
+	bool bc_or = getObjectOr(OBJECT_COLUMN_4); 
+
+	return gc_pos && gc_or 
+		&& rc_pos && rc_or
+		&& mc_pos && mc_or
+		&& bc_pos && bc_or;
+}
+
+
+bool CYarpCommInterface::getObjectPos(int type)
+{
+	CMessage msgOut;
+	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_POSITION_OBJECT_TYPE;
+	msgOut.uParam.resize(1);
+	msgOut.fData.resize(0);
+	msgOut.uParam[0]=type;
 	return Send(msgOut);
-			
+}
+
+bool CYarpCommInterface::getObjectOr(int type)
+{
+	CMessage msgOut;
+	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE;
+	msgOut.uParam.resize(1);
+	msgOut.fData.resize(0);
+	msgOut.uParam[0]=type;
+	return Send(msgOut);
 }
 
 void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *private_data)
@@ -721,6 +762,10 @@ void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *priva
 		break;
 	case UpperLimb::VEL_TRAJECTORY_ASYNC_FINISHED:		
 		velTrajectoryFinishedAsync(msgIn);
+		break;
+	case VISION_BOT_Command::VISION_BOT_GET_POSITION_OBJECT_TYPE+ACK:
+		if( msgIn.fData.size() < 1 ){break;}
+		// TO DO
 		break;
 	default:
 		break;

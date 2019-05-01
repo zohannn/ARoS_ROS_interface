@@ -22,6 +22,7 @@
 #include <YarpConnector.h>
 #include <yarp/os/Network.h>
 #include "Joint_States.h"
+#include "common.h"
 
 // Boost logging
 #include <boost\log\core.hpp>
@@ -53,7 +54,7 @@ public:
 	boost::atomic<bool> joint_states_connected;
 	bool joint_states_opened;
 	std::string yarp_name;
-	std::string yarp_name_receiver;
+	std::string yarp_name_joints_state_receiver;
 	std::string yarp_name_sender;
 	boost::signal<void ()> sig_update;
 	//int flag_all;// 1 : OK; 0: Error
@@ -134,7 +135,11 @@ public:
 	float l2_norm(std::vector<float>& v);
 	bool inRange(float a,float b, float x);
 
+	// VisionBot
 	bool lookAtPosition(float dX, float dY, float dZ);
+	bool getVisionInfo();
+	bool getObjectPos(int type);
+	bool getObjectOr(int type);
 
 	// logging
 	void init_logging();

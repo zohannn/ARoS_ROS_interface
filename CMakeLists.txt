@@ -9,34 +9,9 @@ project(ARoS_ROS_interface)
 
 set( HOME $ENV{MAINPROJECT} )
 set (VLD $ENV{VLD_ROOT} )
-#set(HOME C:/Work/Repository)
-#set( LIB_BIN_DIR ${HOME}/Libraries_bin )
-#include( ${LIB_BIN_DIR}/CMakeScripts/CommonScripts.cmake )
 
 set( LIBRARIES_DIR ${HOME}/Libraries )
 include( ${LIBRARIES_DIR}/CMakeScripts/CommonScripts.cmake )
-
-#--------------------------------------------------------------------------------------------
-# # Libraries dependencies
-# add_subdirectory(UpperLimb)
-# add_subdirectory(PanTilt)
-# add_subdirectory(VisionBot)
-
-# # Project dependencies include directories
-# include_directories(
-	# ${UpperLimb_INCLUDE_DIRS}
-	# ${PanTilt_INCLUDE_DIRS}
-	# ${VisionBot_INCLUDE_DIRS}
-# )
-
-
-# # Project dependencies link directories
-# link_directories(
-	# ${UpperLimb_LIBRARY_DIRS}
-	# ${PanTilt_LIBRARY_DIRS}
-	# ${VisionBot_LIBRARY_DIRS}
-# )
-
 
 #--------------------------------------------------------------------------------------------
 # ROS and ROSDEPS directories
@@ -51,6 +26,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
 #--------------------------------------------------------------------------------------------
+# Eigen Library
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+set( EIGEN_INCLUDE $ENV{EIGEN_INCLUDE} )
+find_package(Eigen3 REQUIRED)
+
+#--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project
 set( LIBRARIES_DIR ${HOME}/Libraries )
 set( HARDWARE_DIR ${HOME}/Hardware )
@@ -59,6 +40,7 @@ set( HARDWARE_DIR ${HOME}/Hardware )
 #--------------------------------------------------------------------------------------------
 # YARP
 Configure_Package(YARP)
+Configure_Package(DataShare)
 Configure_Package(YarpCommunication)
 #--------------------------------------------------------------------------------------------
 # Definition of include directories
@@ -78,6 +60,7 @@ Configure_Package(YarpCommunication)
 		${ROS_INCLUDE}
 		${ROSDEPS_INCLUDE}		
 		${VLD}
+		${EIGEN_INCLUDE} 
 	)
 	
 	link_directories(

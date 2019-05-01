@@ -166,5 +166,4 @@ public:
 	std::vector<movement> task_micro; // task with micro steps to execute 
 
 	bool execTask(bool pos); // execute the task
-
 };
