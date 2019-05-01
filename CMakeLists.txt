@@ -27,7 +27,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 #--------------------------------------------------------------------------------------------
 # Eigen Library
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set( EIGEN_INCLUDE $ENV{EIGEN_INCLUDE} )
 find_package(Eigen3 REQUIRED)
 

@@ -35,13 +35,18 @@ protected:
 	bool task_loaded; // true if there is a task loaded;
 	boost::atomic<bool> start_joint_update;
 	boost::thread update_joints_values_thd;
+	boost::atomic<bool> start_vision_update;
+	boost::thread update_vision_values_thd;
 
 
 public:
 	void updateJointValues();
+	void updateVisionValues();
 	void updateJointValuesAsync();
 	void start_joint_updating(); // start update the joint values
 	void stop_joint_updating(); // stop update the joint values
+	void start_vision_updating(); // start update the vision info
+	void stop_vision_updating(); // stop update the vision info
 
 
 // Implementation
@@ -132,6 +137,9 @@ public:
 	void EnableLeftUpperLimbGroup(bool b); bool left_enabled;
 	void EnableLeftArmGroup(bool b);
 	void EnableLeftHandGroup(bool b);
+	void EnableVisionTargetGroup(bool b);
+	void EnableVisionObstaclesGroup(bool b);
+	void EnableVisionGroup(bool b);
 
 	// load a task
 	bool loadTask(CString file_name);

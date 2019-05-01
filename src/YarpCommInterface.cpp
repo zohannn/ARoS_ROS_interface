@@ -45,18 +45,15 @@ CYarpCommInterface::CYarpCommInterface( const std::string name, const std::strin
 	upperlimb_offset.push_back(0.0f*DEG_TO_RAD_F); //joint 9
 	upperlimb_offset.push_back(0.0f*DEG_TO_RAD_F); //joint 10
 
+	// objects
+	this->green_column = objPtr(new Object(OBJECT_COLUMN_1,"Green Column"));
+	this->red_column = objPtr(new Object(OBJECT_COLUMN_2,"Red Column"));
+	this->magenta_column = objPtr(new Object(OBJECT_COLUMN_3,"Magenta Column"));
+	this->blue_column = objPtr(new Object(OBJECT_COLUMN_4,"Blue Column"));
+
+	// logging
 	init_logging();
 
-	//obs_num=0;
-	//refresh=0;	
-	//tar_num=0;
-	//for(int i=0;i<85;i++)
-	//{
-		//obs_g[i]=300;
-	//}	
-	//neck=0;
-	//v_pan=-30;
-	//v_tilt=-10;
 }
 
 CYarpCommInterface::~CYarpCommInterface()
@@ -727,6 +724,7 @@ bool CYarpCommInterface::getVisionInfo()
 
 bool CYarpCommInterface::getObjectPos(int type)
 {
+	this->object_type = type;
 	CMessage msgOut;
 	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_POSITION_OBJECT_TYPE;
 	msgOut.uParam.resize(1);
@@ -737,6 +735,7 @@ bool CYarpCommInterface::getObjectPos(int type)
 
 bool CYarpCommInterface::getObjectOr(int type)
 {
+	this->object_type = type;
 	CMessage msgOut;
 	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE;
 	msgOut.uParam.resize(1);
@@ -745,9 +744,31 @@ bool CYarpCommInterface::getObjectOr(int type)
 	return Send(msgOut);
 }
 
+objPtr CYarpCommInterface::getGreenColumn()
+{
+	return this->green_column;
+}
+
+objPtr CYarpCommInterface::getRedColumn()
+{
+	return this->red_column;
+}
+
+objPtr CYarpCommInterface::getMagentaColumn()
+{
+	return this->magenta_column;
+}
+
+objPtr CYarpCommInterface::getBlueColumn()
+{
+	return this->blue_column;
+}
+
 void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *private_data)
 {
 	b_error = false;
+	std::vector<float> obj_pos(3,0.0);
+	std::vector<float> obj_or(3,0.0);
 
 	switch(msgIn.uCommand)
 	{
@@ -764,10 +785,48 @@ void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *priva
 		velTrajectoryFinishedAsync(msgIn);
 		break;
 	case VISION_BOT_Command::VISION_BOT_GET_POSITION_OBJECT_TYPE+ACK:
+		if( msgIn.fData.size() < 1 ){break;}		
+		obj_pos.at(0)=msgIn.fData[0];
+		obj_pos.at(1)=msgIn.fData[1];
+		obj_pos.at(2)=msgIn.fData[2];  
+		switch(this->object_type)
+		{
+			case OBJECT_COLUMN_1: // green column
+				this->green_column->setPos(obj_pos);
+				break;
+			case OBJECT_COLUMN_2: // red column
+				this->red_column->setPos(obj_pos);
+				break;
+			case OBJECT_COLUMN_3: // magenta column
+				this->magenta_column->setPos(obj_pos);
+				break;
+			case OBJECT_COLUMN_4: // blue column
+				this->blue_column->setPos(obj_pos);
+				break;
+		}
+		break;
+	case VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE+ACK:
 		if( msgIn.fData.size() < 1 ){break;}
-		// TO DO
+		obj_or.at(0)=msgIn.fData[0];
+		obj_or.at(1)=msgIn.fData[1];
+		obj_or.at(2)=msgIn.fData[2];  
+		switch(this->object_type)
+		{
+			case OBJECT_COLUMN_1: // green column
+				this->green_column->setOr(obj_or);
+				break;
+			case OBJECT_COLUMN_2: // red column
+				this->red_column->setOr(obj_or);
+				break;
+			case OBJECT_COLUMN_3: // magenta column
+				this->magenta_column->setOr(obj_or);
+				break;
+			case OBJECT_COLUMN_4: // blue column
+				this->blue_column->setOr(obj_or);
+				break;
+		}
 		break;
-	default:
-		break;
+	//default:
+		//break;
 	}
 }

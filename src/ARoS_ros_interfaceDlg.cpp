@@ -98,6 +98,7 @@ BOOL CARoS_ros_interfaceDlg::OnInitDialog()
 	EnableRightUpperLimbGroup(false); right_enabled = false;
 	EnableLeftUpperLimbGroup(false); left_enabled = false;
 	EnableExecModeGroup(false);
+	EnableVisionGroup(false);
 	CheckDlgButton(IDC_RADIO_POS,1);
 	CheckDlgButton(IDC_CHECK_OFFLINE,1);
 	SetDlgItemText(IDC_EDIT_MICRO,_T("1"));
@@ -329,6 +330,39 @@ void CARoS_ros_interfaceDlg::EnableLeftUpperLimbGroup(bool b)
 	left_enabled = b;
 }
 
+void CARoS_ros_interfaceDlg::EnableVisionGroup(bool b)
+{
+	GetDlgItem(IDC_STATIC_VISION)->EnableWindow(b);
+	EnableVisionTargetGroup(b);
+	EnableVisionObstaclesGroup(b);
+}
+void CARoS_ros_interfaceDlg::EnableVisionTargetGroup(bool b)
+{
+	GetDlgItem(IDC_STATIC_TARGET)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_X_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_TAR_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Y_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_y_POS_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_TAR_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Z_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_TAR_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Roll_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Roll_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Roll_TAR_DEG)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Pitch_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Pitch_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Pitch_TAR_DEG)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Yaw_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_Yaw_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_YAW_TAR_DEG)->EnableWindow(b);
+}
+
+void CARoS_ros_interfaceDlg::EnableVisionObstaclesGroup(bool b)
+{
+	GetDlgItem(IDC_STATIC_OBSTACLES)->EnableWindow(b);
+}
 
 void CARoS_ros_interfaceDlg::updateJointValuesAsync()
 {
@@ -412,6 +446,26 @@ void CARoS_ros_interfaceDlg::updateJointValues()
 		}
 	}
 	//addLogLine(_T("thread finished"));
+}
+
+void CARoS_ros_interfaceDlg::updateVisionValues()
+{
+	while(start_vision_update){
+		if(yarp_vision->getVisionInfo()){
+
+			std::vector<float> tar_pos;
+			yarp_vision->getGreenColumn()->getPos(tar_pos);
+			yarp_vision->getRedColumn();
+			yarp_vision->getMagentaColumn();
+			yarp_vision->getBlueColumn();
+
+			CString s; int precision = 2;
+			s.Format(_T("%.*f"),precision,tar_pos.at(0)); GetDlgItem(IDC_X_POS_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,tar_pos.at(1)); GetDlgItem(IDC_y_POS_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,tar_pos.at(2)); GetDlgItem(IDC_Z_POS_TAR)->SetWindowTextW(s);
+			// TO DO
+		}
+	}
 }
 
 
@@ -527,6 +581,17 @@ void CARoS_ros_interfaceDlg::start_joint_updating()
 void CARoS_ros_interfaceDlg::stop_joint_updating()
 {
 	start_joint_update = false;		
+}
+
+void CARoS_ros_interfaceDlg::start_vision_updating()
+{
+	start_vision_update = true;
+	update_vision_values_thd = boost::thread(boost::bind(&CARoS_ros_interfaceDlg::updateVisionValues, this));
+
+}
+void CARoS_ros_interfaceDlg::stop_vision_updating()
+{
+	start_vision_update = false;		
 }
 
 void CARoS_ros_interfaceDlg::onBnClickedButtonRightHome0()

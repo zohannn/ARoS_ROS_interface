@@ -22,6 +22,7 @@
 #include <YarpConnector.h>
 #include <yarp/os/Network.h>
 #include "Joint_States.h"
+#include "Object.h"
 #include "common.h"
 
 // Boost logging
@@ -36,6 +37,11 @@
 
 // Boost Signals
 #include <boost/signal.hpp>
+
+// Boost shared pointer
+#include <boost\shared_ptr.hpp>
+
+typedef boost::shared_ptr<Object> objPtr;
 
 class CYarpCommInterface : public CYarpCommunication
 {
@@ -140,6 +146,14 @@ public:
 	bool getVisionInfo();
 	bool getObjectPos(int type);
 	bool getObjectOr(int type);
+
+	// objects of the scenario
+	int object_type;
+	objPtr green_column; objPtr getGreenColumn();
+	objPtr red_column; objPtr getRedColumn();
+	objPtr magenta_column; objPtr getMagentaColumn(); 
+	objPtr blue_column; objPtr getBlueColumn();
+
 
 	// logging
 	void init_logging();

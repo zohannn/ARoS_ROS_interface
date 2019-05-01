@@ -298,6 +298,21 @@ void CARoS_ros_interfaceApp::OnYarpVision()
 		m_pMainWnd->GetMenu()->CheckMenuItem(ID_YARP_VISION,MF_UNCHECKED|MF_BYCOMMAND);
 	}
 	main_dlg.addLogLine(status);
+	if(yarp_vision->connected)
+	{// connected
+			main_dlg.addLogLine(_T("Vision updating started"));
+			b_yarp_vision_states = true;	
+			main_dlg.start_vision_updating();
+			main_dlg.EnableVisionGroup(true);
+			update_vision_values_thd = boost::thread(boost::bind(&CARoS_ros_interfaceApp::updateVisionValues, this));
+
+	}else{
+		// disconnected
+		b_yarp_vision_states = false;	
+		main_dlg.stop_vision_updating();
+		main_dlg.EnableVisionGroup(false);
+		main_dlg.addLogLine(_T("Vision updating stopped"));
+	}
 }
 
 void CARoS_ros_interfaceApp::updateUpperLimbValues()
@@ -307,6 +322,22 @@ void CARoS_ros_interfaceApp::updateUpperLimbValues()
 		Joint_States jstate;
 		if(yarp_upperlimb->getJointState(jstate))
 		{
+			// send to the ROS network
+		}
+	}
+}
+
+void CARoS_ros_interfaceApp::updateVisionValues()
+{
+	while(b_yarp_vision_states)
+	{
+		if(yarp_vision->getVisionInfo())
+		{
+			yarp_vision->getGreenColumn();
+			yarp_vision->getRedColumn();
+			yarp_vision->getMagentaColumn();
+			yarp_vision->getBlueColumn();
+
 			// send to the ROS network
 		}
 	}
