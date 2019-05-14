@@ -46,10 +46,14 @@ CYarpCommInterface::CYarpCommInterface( const std::string name, const std::strin
 	upperlimb_offset.push_back(0.0f*DEG_TO_RAD_F); //joint 10
 
 	// objects
-	this->green_column = objPtr(new Object(OBJECT_COLUMN_1,"Green Column"));
-	this->red_column = objPtr(new Object(OBJECT_COLUMN_2,"Red Column"));
-	this->magenta_column = objPtr(new Object(OBJECT_COLUMN_3,"Magenta Column"));
-	this->blue_column = objPtr(new Object(OBJECT_COLUMN_4,"Blue Column"));
+	std::vector<float> obj_size(3,0.0);
+	obj_size.at(0) = 90.0; // X [mm]
+	obj_size.at(1) = 90.0; // Y [mm]
+	obj_size.at(2) = 340.0; // Z [mm]
+	this->green_column = objPtr(new Object(OBJECT_COLUMN_1,"Green Column",obj_size));
+	this->red_column = objPtr(new Object(OBJECT_COLUMN_2,"Red Column",obj_size));
+	this->magenta_column = objPtr(new Object(OBJECT_COLUMN_3,"Magenta Column",obj_size));
+	this->blue_column = objPtr(new Object(OBJECT_COLUMN_4,"Blue Column",obj_size));
 
 	// logging
 	init_logging();
@@ -724,7 +728,7 @@ bool CYarpCommInterface::getVisionInfo()
 
 bool CYarpCommInterface::getObjectPos(int type)
 {
-	this->object_type = type;
+	//this->object_type = type;
 	CMessage msgOut;
 	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_POSITION_OBJECT_TYPE;
 	msgOut.uParam.resize(1);
@@ -735,7 +739,7 @@ bool CYarpCommInterface::getObjectPos(int type)
 
 bool CYarpCommInterface::getObjectOr(int type)
 {
-	this->object_type = type;
+	//this->object_type = type;
 	CMessage msgOut;
 	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE;
 	msgOut.uParam.resize(1);
@@ -785,10 +789,11 @@ void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *priva
 		velTrajectoryFinishedAsync(msgIn);
 		break;
 	case VISION_BOT_Command::VISION_BOT_GET_POSITION_OBJECT_TYPE+ACK:
-		if( msgIn.fData.size() < 1 ){break;}		
-		obj_pos.at(0)=msgIn.fData[0];
-		obj_pos.at(1)=msgIn.fData[1];
-		obj_pos.at(2)=msgIn.fData[2];  
+		if( msgIn.fData.size() < 1 ){break;}
+		this->object_type=msgIn.fData[0]; 
+		obj_pos.at(0)=msgIn.fData[1];
+		obj_pos.at(1)=msgIn.fData[2];
+		obj_pos.at(2)=msgIn.fData[3];  
 		switch(this->object_type)
 		{
 			case OBJECT_COLUMN_1: // green column
@@ -807,9 +812,10 @@ void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *priva
 		break;
 	case VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE+ACK:
 		if( msgIn.fData.size() < 1 ){break;}
-		obj_or.at(0)=msgIn.fData[0];
-		obj_or.at(1)=msgIn.fData[1];
-		obj_or.at(2)=msgIn.fData[2];  
+		this->object_type=msgIn.fData[0]; 
+		obj_or.at(0)=msgIn.fData[1];
+		obj_or.at(1)=msgIn.fData[2];
+		obj_or.at(2)=msgIn.fData[3];  
 		switch(this->object_type)
 		{
 			case OBJECT_COLUMN_1: // green column

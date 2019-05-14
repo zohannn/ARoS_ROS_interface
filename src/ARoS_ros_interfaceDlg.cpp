@@ -102,6 +102,8 @@ BOOL CARoS_ros_interfaceDlg::OnInitDialog()
 	CheckDlgButton(IDC_RADIO_POS,1);
 	CheckDlgButton(IDC_CHECK_OFFLINE,1);
 	SetDlgItemText(IDC_EDIT_MICRO,_T("1"));
+	SetDlgItemText(IDC_EDIT_CUTOFF_FREQ,_T("0.05"));
+	SetDlgItemText(IDC_EDIT_DELTA_TIME,_T("1"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -336,6 +338,7 @@ void CARoS_ros_interfaceDlg::EnableVisionGroup(bool b)
 	EnableVisionTargetGroup(b);
 	EnableVisionObstaclesGroup(b);
 }
+
 void CARoS_ros_interfaceDlg::EnableVisionTargetGroup(bool b)
 {
 	GetDlgItem(IDC_STATIC_TARGET)->EnableWindow(b);
@@ -357,11 +360,87 @@ void CARoS_ros_interfaceDlg::EnableVisionTargetGroup(bool b)
 	GetDlgItem(IDC_STATIC_Yaw_TAR)->EnableWindow(b);
 	GetDlgItem(IDC_Yaw_TAR)->EnableWindow(b);
 	GetDlgItem(IDC_YAW_TAR_DEG)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QX_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_QX_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QY_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_QY_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QZ_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_QZ_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QW_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_QW_TAR)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_ROT_MAT)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_00)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_01)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_02)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_10)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_11)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_12)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_20)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_21)->EnableWindow(b);
+	GetDlgItem(IDC_ROT_22)->EnableWindow(b);
+
 }
 
 void CARoS_ros_interfaceDlg::EnableVisionObstaclesGroup(bool b)
 {
 	GetDlgItem(IDC_STATIC_OBSTACLES)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_GREEN_COLUMN)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_X_GC)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_GC)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_GC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Y_GC)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_GC)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_GC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Z_GC)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_GC)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_GC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QX_GC)->EnableWindow(b);
+	GetDlgItem(IDC_QX_GC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QY_GC)->EnableWindow(b);
+	GetDlgItem(IDC_QY_GC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QZ_GC)->EnableWindow(b);
+	GetDlgItem(IDC_QZ_GC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QW_GC)->EnableWindow(b);
+	GetDlgItem(IDC_QW_GC)->EnableWindow(b);
+
+	GetDlgItem(IDC_STATIC_MAGENTA_COLUMN)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_X_MC)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_MC)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_MC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Y_MC)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_MC)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_MC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Z_MC)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_MC)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_MC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QX_MC)->EnableWindow(b);
+	GetDlgItem(IDC_QX_MC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QY_MC)->EnableWindow(b);
+	GetDlgItem(IDC_QY_MC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QZ_MC)->EnableWindow(b);
+	GetDlgItem(IDC_QZ_MC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QW_MC)->EnableWindow(b);
+	GetDlgItem(IDC_QW_MC)->EnableWindow(b);
+
+	GetDlgItem(IDC_STATIC_BLUE_COLUMN)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_X_BC)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_BC)->EnableWindow(b);
+	GetDlgItem(IDC_X_POS_BC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Y_BC)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_BC)->EnableWindow(b);
+	GetDlgItem(IDC_Y_POS_BC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_Z_BC)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_BC)->EnableWindow(b);
+	GetDlgItem(IDC_Z_POS_BC_MM)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QX_BC)->EnableWindow(b);
+	GetDlgItem(IDC_QX_BC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QY_BC)->EnableWindow(b);
+	GetDlgItem(IDC_QY_BC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QZ_BC)->EnableWindow(b);
+	GetDlgItem(IDC_QZ_BC)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_QW_BC)->EnableWindow(b);
+	GetDlgItem(IDC_QW_BC)->EnableWindow(b);
+
 }
 
 void CARoS_ros_interfaceDlg::updateJointValuesAsync()
@@ -450,20 +529,76 @@ void CARoS_ros_interfaceDlg::updateJointValues()
 
 void CARoS_ros_interfaceDlg::updateVisionValues()
 {
+	std::vector<float> obj_pos;
+	std::vector<float> obj_or;
+	Quaternionf obj_q_or;
+	Matrix3f obj_m_or;
+	CString s; int precision = 2;
 	while(start_vision_update){
-		if(yarp_vision->getVisionInfo()){
-
-			std::vector<float> tar_pos;
-			yarp_vision->getGreenColumn()->getPos(tar_pos);
-			yarp_vision->getRedColumn();
-			yarp_vision->getMagentaColumn();
-			yarp_vision->getBlueColumn();
-
-			CString s; int precision = 2;
-			s.Format(_T("%.*f"),precision,tar_pos.at(0)); GetDlgItem(IDC_X_POS_TAR)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,tar_pos.at(1)); GetDlgItem(IDC_y_POS_TAR)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,tar_pos.at(2)); GetDlgItem(IDC_Z_POS_TAR)->SetWindowTextW(s);
-			// TO DO
+		if(this->yarp_vision->getVisionInfo()){	
+			CString str_freq, str_dt;
+			GetDlgItemText(IDC_EDIT_CUTOFF_FREQ,str_freq);
+			GetDlgItemText(IDC_EDIT_DELTA_TIME,str_dt);
+			float value_freq = _ttof(str_freq);
+			float value_dt = _ttof(str_dt);
+			// green column
+			this->yarp_vision->getGreenColumn()->setLowPassFilters(value_freq,value_dt);
+			this->yarp_vision->getGreenColumn()->getPos(obj_pos);			
+			s.Format(_T("%.*f"),precision,obj_pos.at(0)); GetDlgItem(IDC_X_POS_GC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(1)); GetDlgItem(IDC_Y_POS_GC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(2)); GetDlgItem(IDC_Z_POS_GC)->SetWindowTextW(s);			
+		    obj_q_or = this->yarp_vision->getGreenColumn()->getQOr();			
+			s.Format(_T("%.*f"),precision,obj_q_or.x()); GetDlgItem(IDC_QX_GC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.y()); GetDlgItem(IDC_QY_GC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.z()); GetDlgItem(IDC_QZ_GC)->SetWindowTextW(s);						
+			s.Format(_T("%.*f"),precision,obj_q_or.w()); GetDlgItem(IDC_QW_GC)->SetWindowTextW(s);						
+			// red column
+			this->yarp_vision->getRedColumn()->setLowPassFilters(value_freq,value_dt);
+			this->yarp_vision->getRedColumn()->getPos(obj_pos);			
+			s.Format(_T("%.*f"),precision,obj_pos.at(0)); GetDlgItem(IDC_X_POS_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(1)); GetDlgItem(IDC_y_POS_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(2)); GetDlgItem(IDC_Z_POS_TAR)->SetWindowTextW(s);			
+			this->yarp_vision->getRedColumn()->getOr(obj_or);			
+			s.Format(_T("%.*f"),precision,obj_or.at(0)); GetDlgItem(IDC_Roll_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_or.at(1)); GetDlgItem(IDC_Pitch_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_or.at(2)); GetDlgItem(IDC_Yaw_TAR)->SetWindowTextW(s);						
+			obj_q_or = this->yarp_vision->getRedColumn()->getQOr();			
+			s.Format(_T("%.*f"),precision,obj_q_or.x()); GetDlgItem(IDC_QX_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.y()); GetDlgItem(IDC_QY_TAR)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.z()); GetDlgItem(IDC_QZ_TAR)->SetWindowTextW(s);						
+			s.Format(_T("%.*f"),precision,obj_q_or.w()); GetDlgItem(IDC_QW_TAR)->SetWindowTextW(s);		
+			obj_m_or = this->yarp_vision->getRedColumn()->getRot();
+			s.Format(_T("%.*f"),precision,obj_m_or(0,0)); GetDlgItem(IDC_ROT_00)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(0,1)); GetDlgItem(IDC_ROT_01)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(0,2)); GetDlgItem(IDC_ROT_02)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(1,0)); GetDlgItem(IDC_ROT_10)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(1,1)); GetDlgItem(IDC_ROT_11)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(1,2)); GetDlgItem(IDC_ROT_12)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(2,0)); GetDlgItem(IDC_ROT_20)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(2,1)); GetDlgItem(IDC_ROT_21)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_m_or(2,2)); GetDlgItem(IDC_ROT_22)->SetWindowTextW(s);
+			// magenta column
+			this->yarp_vision->getMagentaColumn()->setLowPassFilters(value_freq,value_dt);
+			this->yarp_vision->getMagentaColumn()->getPos(obj_pos);			
+			s.Format(_T("%.*f"),precision,obj_pos.at(0)); GetDlgItem(IDC_X_POS_MC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(1)); GetDlgItem(IDC_Y_POS_MC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(2)); GetDlgItem(IDC_Z_POS_MC)->SetWindowTextW(s);			
+			obj_q_or = this->yarp_vision->getMagentaColumn()->getQOr();			
+			s.Format(_T("%.*f"),precision,obj_q_or.x()); GetDlgItem(IDC_QX_MC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.y()); GetDlgItem(IDC_QY_MC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.z()); GetDlgItem(IDC_QZ_MC)->SetWindowTextW(s);						
+			s.Format(_T("%.*f"),precision,obj_q_or.w()); GetDlgItem(IDC_QW_MC)->SetWindowTextW(s);						
+			// blue column
+			this->yarp_vision->getBlueColumn()->setLowPassFilters(value_freq,value_dt);
+			this->yarp_vision->getBlueColumn()->getPos(obj_pos);			
+			s.Format(_T("%.*f"),precision,obj_pos.at(0)); GetDlgItem(IDC_X_POS_BC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(1)); GetDlgItem(IDC_Y_POS_BC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_pos.at(2)); GetDlgItem(IDC_Z_POS_BC)->SetWindowTextW(s);			
+			obj_q_or = this->yarp_vision->getBlueColumn()->getQOr();			
+			s.Format(_T("%.*f"),precision,obj_q_or.x()); GetDlgItem(IDC_QX_BC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.y()); GetDlgItem(IDC_QY_BC)->SetWindowTextW(s);
+			s.Format(_T("%.*f"),precision,obj_q_or.z()); GetDlgItem(IDC_QZ_BC)->SetWindowTextW(s);						
+			s.Format(_T("%.*f"),precision,obj_q_or.w()); GetDlgItem(IDC_QW_BC)->SetWindowTextW(s);						
 		}
 	}
 }

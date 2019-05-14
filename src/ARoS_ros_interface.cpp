@@ -284,7 +284,7 @@ void CARoS_ros_interfaceApp::OnYarpVision()
 			status = _T("Node is connected to the Vision YARP server");
 			m_pMainWnd->GetMenu()->CheckMenuItem(ID_YARP_VISION,MF_CHECKED|MF_BYCOMMAND);
 
-			yarp_vision->lookAtPosition(look_home.at(0),look_home.at(1),look_home.at(2));
+			//yarp_vision->lookAtPosition(look_home.at(0),look_home.at(1),look_home.at(2));
 		}else{
 			yarp_vision->connected=false;
 			status = _T("Node could NOT connect to the Vision YARP server");

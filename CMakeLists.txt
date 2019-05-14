@@ -5,7 +5,7 @@ cmake_policy( VERSION ${CMAKE_VERSION} )
 #--------------------------------------------------------------------------------------------
 # The project name
 project(ARoS_ROS_interface)
-## set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
+set(CMAKE_BUILD_TYPE Debug)
 
 set( HOME $ENV{MAINPROJECT} )
 set (VLD $ENV{VLD_ROOT} )
@@ -30,6 +30,12 @@ link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set( EIGEN_INCLUDE $ENV{EIGEN_INCLUDE} )
 find_package(Eigen3 REQUIRED)
+#--------------------------------------------------------------------------------------------
+# Low Pass Filter
+set( LPF_HOME $ENV{LPF_ROOT} )
+include_directories(${LPF_HOME}/include)
+add_library(LPF STATIC IMPORTED)
+set_property(TARGET LPF PROPERTY IMPORTED_LOCATION ${LPF_HOME}/build/${CMAKE_BUILD_TYPE}/low_pass_filter.lib)
 
 #--------------------------------------------------------------------------------------------
 # Define Variables to store directories that will be used on the project
@@ -152,4 +158,5 @@ Configure_Package(YarpCommunication)
 		rostime.lib
 		rosconsole.lib
 		roscpp_serialization.lib
+		LPF
 	)
