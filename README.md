@@ -33,3 +33,4 @@ Installation steps:
 		OPENCV_LIB = %OPENCV_ROOT%\lib, OPENCV_INCLUDE = %OPENCV_ROOT%\include. Put them in the PATH.
 		
 	8. Clone the dependencies (https://github.com/zohannn/ARoS_ROS_interface_DEPS) under C:/ARoS_ROS_interface_DEPS and define the environment variable MAINPROJECT = C:/ARoS_ROS_interface_DEPS.
+	9. Compile in Release with Debug info

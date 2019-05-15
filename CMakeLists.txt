@@ -5,7 +5,8 @@ cmake_policy( VERSION ${CMAKE_VERSION} )
 #--------------------------------------------------------------------------------------------
 # The project name
 project(ARoS_ROS_interface)
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set( HOME $ENV{MAINPROJECT} )
 set (VLD $ENV{VLD_ROOT} )

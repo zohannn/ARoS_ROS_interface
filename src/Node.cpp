@@ -5,6 +5,7 @@
 #include "../include/ARoS_ROS_interface.h"
 #include "../include/Node.h"
 
+#include <stdlib.h>
 
 // CNode
 
@@ -36,7 +37,13 @@ BOOL CNode::InitInstance()
 bool CNode::on_init()
 {
    node_name = _T("ARoS");
-   ros::init(__argc,__argv,"ARoS");
+   std::map<std::string,std::string> remappings;
+   //ros::init(__argc,__argv,"ARoS");
+   const char* master = this->WinGetEnv("ROS_MASTER_URI");
+   remappings["__master"] = master;
+   const char* ip = this->WinGetEnv("ROS_IP");    
+   remappings["__hostname"] = ip;
+   ros::init(remappings,"ARoS");
 	if ( ! ros::master::check() ) {
 		return false;
 	}
