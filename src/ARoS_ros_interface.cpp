@@ -32,9 +32,6 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 	// Place all significant initialization in InitInstance
 
 
-	// call ROS setup bat file
-	//system("../bin/setup.bat");
-
 	upperlimb_mode = 0; //RIGHT UPPER LIMB
 	switch(upperlimb_mode){
 		case 0: default: str_upperlimb_server = "/aros/upperlimb_right"; break;

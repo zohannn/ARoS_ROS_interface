@@ -33,4 +33,27 @@ Installation steps:
 		OPENCV_LIB = %OPENCV_ROOT%\lib, OPENCV_INCLUDE = %OPENCV_ROOT%\include. Put them in the PATH.
 		
 	8. Clone the dependencies (https://github.com/zohannn/ARoS_ROS_interface_DEPS) under C:/ARoS_ROS_interface_DEPS and define the environment variable MAINPROJECT = C:/ARoS_ROS_interface_DEPS.
-	9. Compile in Release with Debug info
+	9. Compile in Release 
+	
+	How to Debug in Release mode? (https://stackoverflow.com/questions/11253334/how-to-debug-in-release-mode)
+	
+	In VS, right click your project, chose "Properties".
+
+    Click the C/C++ node. Set Debug Information Format to C7 compatible (/Z7) or Program Database (/Zi).
+
+    Expand Linker and click the General node. Set Enable Incremental Linking to No (/INCREMENTAL:NO).
+
+    Select the Debugging node. Set Generate Debug Info to Yes (/DEBUG).
+
+    Select the Optimization node. Set References to Yes (/OPT:REF).
+
+        if /OPT:REF is specified, /OPT:ICF is on by default.
+
+That's ripped directly from Microsoft's documentation:
+
+    How to: Debug a Release Build
+    OPT Optimizations
+
+I do this all of the time and pretty much never debug in debug mode anymore. As you know, many errors that occur in a release build may not occur in a debug build (almost certainly the errors that arise from invoking UB).
+
+Also, I work on a project which uses a ton of image processing and performs a lot of compression/decompression of large images. Using a slow debug build is simply impractical.
