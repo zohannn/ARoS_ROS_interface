@@ -139,6 +139,163 @@ UINT publishChat (LPVOID pParam)
 
 }
 
+UINT publishRedColumn (LPVOID pParam)
+{
+ 
+  ros::Rate loop_rate(10);
+
+  CNode* node = (CNode*)pParam;
+  ros::Publisher pub = node->getRedColPublisher();
+  boost::shared_ptr<Object> obj_ptr = node->getRedColPtr();
+
+  std::vector<float> obj_ppos; obj_ptr->getPos(obj_ppos);
+  Quaternionf obj_q = obj_ptr->getQOr();
+
+  geometry_msgs::PoseStamped msg;
+
+  msg.header.frame_id = "Red Column Pose";
+  msg.pose.position.x = obj_ppos.at(0); 
+  msg.pose.position.y = obj_ppos.at(1); 
+  msg.pose.position.z = obj_ppos.at(2);   
+  msg.pose.orientation.x = obj_q.x(); 
+  msg.pose.orientation.y = obj_q.y(); 
+  msg.pose.orientation.z = obj_q.z();  
+  msg.pose.orientation.w = obj_q.w(); 
+
+  pub.publish(msg);
+
+  ros::spinOnce();
+  loop_rate.sleep();
+
+  return 0;
+
+}
+
+UINT publishGreenColumn (LPVOID pParam)
+{
+
+  ros::Rate loop_rate(10);
+
+  CNode* node = (CNode*)pParam;
+  ros::Publisher pub = node->getGreenColPublisher();
+  boost::shared_ptr<Object> obj_ptr = node->getGreenColPtr();
+
+  std::vector<float> obj_ppos; obj_ptr->getPos(obj_ppos);
+  Quaternionf obj_q = obj_ptr->getQOr();
+
+  geometry_msgs::PoseStamped msg;
+
+  msg.header.frame_id = "Green Column Pose";
+  msg.pose.position.x = obj_ppos.at(0); 
+  msg.pose.position.y = obj_ppos.at(1); 
+  msg.pose.position.z = obj_ppos.at(2);   
+  msg.pose.orientation.x = obj_q.x(); 
+  msg.pose.orientation.y = obj_q.y(); 
+  msg.pose.orientation.z = obj_q.z();  
+  msg.pose.orientation.w = obj_q.w(); 
+
+  pub.publish(msg);
+
+  ros::spinOnce();
+  loop_rate.sleep();
+
+  return 0;
+
+}
+
+UINT publishBlueColumn (LPVOID pParam)
+{
+  ros::Rate loop_rate(10);
+
+  CNode* node = (CNode*)pParam;
+  ros::Publisher pub = node->getBlueColPublisher();
+  boost::shared_ptr<Object> obj_ptr = node->getBlueColPtr();
+
+  std::vector<float> obj_ppos; obj_ptr->getPos(obj_ppos);
+  Quaternionf obj_q = obj_ptr->getQOr();
+
+  geometry_msgs::PoseStamped msg;
+
+  msg.header.frame_id = "Blue Column Pose";
+  msg.pose.position.x = obj_ppos.at(0); 
+  msg.pose.position.y = obj_ppos.at(1); 
+  msg.pose.position.z = obj_ppos.at(2);   
+  msg.pose.orientation.x = obj_q.x(); 
+  msg.pose.orientation.y = obj_q.y(); 
+  msg.pose.orientation.z = obj_q.z();  
+  msg.pose.orientation.w = obj_q.w(); 
+
+  pub.publish(msg);
+
+  ros::spinOnce();
+  loop_rate.sleep();
+
+  return 0;
+
+}
+
+UINT publishMagentaColumn (LPVOID pParam)
+{
+  ros::Rate loop_rate(10);
+
+  CNode* node = (CNode*)pParam;
+  ros::Publisher pub = node->getMagentaColPublisher();
+  boost::shared_ptr<Object> obj_ptr = node->getMagentaColPtr();
+
+  std::vector<float> obj_ppos; obj_ptr->getPos(obj_ppos);
+  Quaternionf obj_q = obj_ptr->getQOr();
+
+  geometry_msgs::PoseStamped msg;
+
+  msg.header.frame_id = "Magenta Column Pose";
+  msg.pose.position.x = obj_ppos.at(0); 
+  msg.pose.position.y = obj_ppos.at(1); 
+  msg.pose.position.z = obj_ppos.at(2);   
+  msg.pose.orientation.x = obj_q.x(); 
+  msg.pose.orientation.y = obj_q.y(); 
+  msg.pose.orientation.z = obj_q.z();  
+  msg.pose.orientation.w = obj_q.w(); 
+
+  pub.publish(msg);
+
+  ros::spinOnce();
+  loop_rate.sleep();
+
+  return 0;
+
+}
+
+UINT publishTarget (LPVOID pParam)
+{
+  
+  ros::Rate loop_rate(10);
+
+  CNode* node = (CNode*)pParam;
+
+  std::vector<float> tar_ppos; node->getTargetPos(tar_ppos);
+  Quaternionf tar_q_or = node->getTargetQOr();
+  ros::Publisher pub = node->getTargetPublisher();
+
+  geometry_msgs::PoseStamped msg;
+
+  msg.header.frame_id = "Target Pose";
+  msg.pose.position.x = tar_ppos.at(0); 
+  msg.pose.position.y = tar_ppos.at(1); 
+  msg.pose.position.z = tar_ppos.at(2);   
+  msg.pose.orientation.x = tar_q_or.x(); 
+  msg.pose.orientation.y = tar_q_or.y(); 
+  msg.pose.orientation.z = tar_q_or.z();  
+  msg.pose.orientation.w = tar_q_or.w(); 
+
+  pub.publish(msg);
+
+  ros::spinOnce();
+  loop_rate.sleep();
+
+  return 0;
+
+}
+
 
 CString CNode::getNodeName()
 {
@@ -148,6 +305,61 @@ CString CNode::getNodeName()
 ros::Publisher CNode::getPublisher()
 {
 	return pubChat;
+}
+
+ros::Publisher CNode::getRedColPublisher()
+{
+	return this->pubRedColumn;
+}
+
+ros::Publisher CNode::getGreenColPublisher()
+{
+	return this->pubGreenColumn;
+}
+
+ros::Publisher CNode::getBlueColPublisher()
+{
+	return this->pubBlueColumn;
+}
+
+ros::Publisher CNode::getMagentaColPublisher()
+{
+	return this->pubMagentaColumn;
+}
+
+ros::Publisher CNode::getTargetPublisher()
+{
+	return this->pubTarget;
+}
+
+boost::shared_ptr<Object> CNode::getGreenColPtr()
+{
+	return this->greenColumnPtr;
+}
+
+boost::shared_ptr<Object> CNode::getBlueColPtr()
+{
+	return this->blueColumnPtr;
+}
+
+boost::shared_ptr<Object> CNode::getMagentaColPtr()
+{
+	return this->magentaColumnPtr;
+}
+
+boost::shared_ptr<Object> CNode::getRedColPtr()
+{
+	return this->redColumnPtr;
+}
+
+void CNode::getTargetPos(std::vector<float>& ppos)
+{
+	ppos = this->tar_pos;
+}
+
+Quaternionf CNode::getTargetQOr()
+{
+	return this->tar_q_or;
 }
 
 void CNode::setNodeName(CString name)
@@ -216,6 +428,52 @@ void CNode::advertise(std::string topic)
 
 	AfxBeginThread(publishChat,this);
 
+}
+
+void CNode::advertiseRedColumn(boost::shared_ptr<Object> obj, std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->redColumnPtr = obj;
+    CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->pubRedColumn = handle_node.advertise<geometry_msgs::PoseStamped>("/"+node_name_str+"/"+topic, 1);
+	AfxBeginThread(publishRedColumn,this);
+}
+
+void CNode::advertiseGreenColumn(boost::shared_ptr<Object> obj, std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->greenColumnPtr = obj;
+    CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->pubGreenColumn = handle_node.advertise<geometry_msgs::PoseStamped>("/"+node_name_str+"/"+topic, 1);
+	AfxBeginThread(publishGreenColumn,this);
+}
+
+void CNode::advertiseBlueColumn(boost::shared_ptr<Object> obj, std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->blueColumnPtr = obj;
+    CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->pubBlueColumn = handle_node.advertise<geometry_msgs::PoseStamped>("/"+node_name_str+"/"+topic, 1);
+	AfxBeginThread(publishBlueColumn,this);
+}
+
+void CNode::advertiseMagentaColumn(boost::shared_ptr<Object> obj, std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->magentaColumnPtr = obj;
+    CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->pubMagentaColumn = handle_node.advertise<geometry_msgs::PoseStamped>("/"+node_name_str+"/"+topic, 1);
+	AfxBeginThread(publishMagentaColumn,this);
+}
+
+void CNode::advertiseTarget(std::vector<float>& tar_ppos, Quaternionf& tar_q_oor, std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->tar_pos = tar_ppos;
+	this->tar_q_or = tar_q_oor;
+    CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->pubTarget = handle_node.advertise<geometry_msgs::PoseStamped>("/"+node_name_str+"/"+topic, 1);
+	AfxBeginThread(publishTarget,this);
 }
 
 

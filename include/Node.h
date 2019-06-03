@@ -4,8 +4,10 @@
 #include <ros\ros.h>
 #include <ros\network.h>
 #include <std_msgs/String.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Pose.h>
 
-// Logging
+// Boost Logging
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
@@ -15,8 +17,14 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 
-// Signals
+// Boost Signals
 #include <boost/signal.hpp>
+
+// Boost shared Ptr
+#include <boost\shared_ptr.hpp>
+
+// Object
+#include "Object.h"
 
 // CNode
 namespace logging = boost::log;
@@ -49,33 +57,28 @@ public:
 	void advertise(std::string topic);
 	boost::signal< void(CString) > sig_log;
 	ros::Publisher getPublisher();
+
+	// red column publishing
+	boost::shared_ptr<Object> getRedColPtr(); ros::Publisher getRedColPublisher();
+	void advertiseRedColumn(boost::shared_ptr<Object> obj, std::string topic);
+
+	// green column publishing
+	boost::shared_ptr<Object> getGreenColPtr(); ros::Publisher getGreenColPublisher();
+	void advertiseGreenColumn(boost::shared_ptr<Object> obj, std::string topic);
+
+	// blue column publishing
+	boost::shared_ptr<Object> getBlueColPtr(); ros::Publisher getBlueColPublisher();
+	void advertiseBlueColumn(boost::shared_ptr<Object> obj, std::string topic);
+
+	// magenta column publishing
+	boost::shared_ptr<Object> getMagentaColPtr(); ros::Publisher getMagentaColPublisher();
+	void advertiseMagentaColumn(boost::shared_ptr<Object> obj, std::string topic);
+
+	// target publishing
+	void getTargetPos(std::vector<float>& ppos); Quaternionf getTargetQOr(); ros::Publisher getTargetPublisher();
+	void advertiseTarget(std::vector<float>& tar_ppos, Quaternionf& tar_q_oor, std::string topic);
 	
-	/**
-    * @brief This enumerator is used for logging functionalities
-    */
-	/*
-	enum LogLevel {
-	         Debug,
-	         Info,
-	         Warn,
-	         Error,
-	         Fatal
-	 };
-	 */
-
-    /**
-        * @brief This method return the list of loggings
-        * @return
-        */
-    //QStringListModel* loggingModel() { return &logging_model; }
-
-	/**
-    * @brief This method runs logging of the passed message
-    * @param level
-    * @param msg
-    */
-     //void log( const LogLevel &level, const std::string &msg);
-
+	
 protected:
 	const char * WinGetEnv(const char * name);
 	DECLARE_MESSAGE_MAP()
@@ -86,6 +89,14 @@ private:
 	void chatterCallback(const std_msgs::String::ConstPtr& msg);
 	ros::Subscriber subChat; /**< ROS subscriber for information about /chatter */
 	ros::Publisher pubChat;
+	// publisher objects
+	boost::shared_ptr<Object> redColumnPtr; ros::Publisher pubRedColumn;
+	boost::shared_ptr<Object> greenColumnPtr; ros::Publisher pubGreenColumn;
+	boost::shared_ptr<Object> blueColumnPtr; ros::Publisher pubBlueColumn;
+	boost::shared_ptr<Object> magentaColumnPtr; ros::Publisher pubMagentaColumn;
+
+	// publisher target
+	std::vector<float> tar_pos; Quaternionf tar_q_or; ros::Publisher pubTarget;
 
 
 };

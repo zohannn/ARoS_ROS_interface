@@ -332,14 +332,18 @@ void CARoS_ros_interfaceApp::updateVisionValues()
 {
 	while(b_yarp_vision_states)
 	{
-		if(yarp_vision->getVisionInfo())
+		if(yarp_vision->getVisionInfo() && b_ros_connected)
 		{
-			yarp_vision->getGreenColumn();
-			yarp_vision->getRedColumn();
-			yarp_vision->getMagentaColumn();
-			yarp_vision->getBlueColumn();
+			//objects
+			this->ros_node->advertiseRedColumn(yarp_vision->getRedColumn(), "object_pose/red_column");
+			this->ros_node->advertiseGreenColumn(yarp_vision->getGreenColumn(), "object_pose/green_column");
+			this->ros_node->advertiseBlueColumn(yarp_vision->getBlueColumn(), "object_pose/blue_column");
+			this->ros_node->advertiseMagentaColumn(yarp_vision->getMagentaColumn(), "object_pose/magenta_column");
 
-			// send to the ROS network
+			//target
+			std::vector<float>tar_ppos; yarp_vision->getRedColumn()->getTarPos(tar_ppos);
+			Quaternionf tar_q_oor = yarp_vision->getRedColumn()->getTarQOr();
+			this->ros_node->advertiseTarget(tar_ppos,tar_q_oor, "target_pose");
 		}
 	}
 }
