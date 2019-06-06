@@ -18,13 +18,14 @@
 #include "resource.h"		// main symbols
 #include "About_AROS_ros_interface.h"
 #include "ROS_Comm_dlg.h"
-#include "Node.h"
-//#include "YarpCommInterface.h"
 #include "ARoS_ros_interfaceDlg.h"
+#include "circular_buffer.h"
 
 // CARoS_ros_interfaceApp:
 // See ARoS_ros_interface.cpp for the implementation of this class
 //
+
+typedef boost::shared_ptr<CircularBuffers<float>> bufferPtr;
 
 class CARoS_ros_interfaceApp : public CWinApp
 {
@@ -42,13 +43,24 @@ private:
 	boost::thread update_vision_values_thd; // thread to update the vision info
 	void  updateVisionValues (); // Thread vision values
 
+	// buffers
+	int samples_upperlimb_pos; /**< counter to count N_filter_length points for derivation of upperlimb position */
+	int samples_upperlimb_vel; /**< counter to count N_filter_length points for derivation of upperlimb velocity */
+	int N_filter_length; // length of the filter of noise
+	int buffer_size; // buffer size = number of joints
+	bufferPtr upperlimb_pos_buff; // position upperlimb buffer
+	bufferPtr upperlimb_vel_buff; // velocity upperlimb buffer
+
+	int binomialCoeff(int n, int k);	
+	float getNoiseRobustDerivate(int N, float h, std::deque<float>& buff);
+
 // Overrides
 public:
 	virtual BOOL InitInstance();
 	virtual BOOL ExitInstance();
 	
 	// ROS
-	CNode* ros_node; // ros node of the network
+	rosPtr ros_node; // ros node of the network
 	CROS_Comm_dlg ros_comm_dlg; // ros communication dialog
 	CAbout_AROS_ros_dlg about_dlg; // about dialog
 	bool b_ros_connected; // true if the node is connected to the ROS master, false otherwise
@@ -61,6 +73,8 @@ public:
 	CYarpCommInterface* yarp_vision;  // YARP communication with the vision
 	boost::atomic<bool> b_yarp_upperlimb_states;
 	boost::atomic<bool> b_yarp_vision_states;
+
+
 
 	// Main dialog
 	CARoS_ros_interfaceDlg main_dlg;

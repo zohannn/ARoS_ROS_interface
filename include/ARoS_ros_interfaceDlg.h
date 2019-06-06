@@ -17,6 +17,7 @@
 #include "YarpCommInterface.h"
 //#include "afxwin.h"
 
+//typedef boost::shared_ptr<CYarpCommInterface> yarpPtr;
 
 // CARoS_ros_interfaceDlg dialog
 class CARoS_ros_interfaceDlg : public CDialogEx
@@ -41,8 +42,8 @@ protected:
 
 public:
 	void updateJointValues();
+	void updateJointValuesAsync(Joint_States& jstate);
 	void updateVisionValues();
-	void updateJointValuesAsync();
 	void start_joint_updating(); // start update the joint values
 	void stop_joint_updating(); // stop update the joint values
 	void start_vision_updating(); // start update the vision info
@@ -52,7 +53,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	CNode* ros_node; // ROS NODE
+	rosPtr ros_node; // ROS NODE
 	// YARP modules
 	CYarpCommInterface* yarp_upperlimb; // YARP communication with the upperlimb
 	CYarpCommInterface* yarp_vision; // YARP communication with the vision
@@ -116,9 +117,9 @@ public:
 	void addLogLine(CString line);
 
 	// set the ROS node
-	void setROSNode(CNode* r);
+	void setROSNode(rosPtr r);
 	// get the ROS node
-	CNode* getROSNode();
+	rosPtr getROSNode();
 	// set the YARP communication module of the upperlimb
 	void setYARPUpperlimb(CYarpCommInterface* y);
 	// get the YARP communication module of the upperlimb

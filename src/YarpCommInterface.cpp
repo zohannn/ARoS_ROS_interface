@@ -106,21 +106,24 @@ bool CYarpCommInterface::start_joint_states_recever(std::string sender_name)
 void CYarpCommInterface::stop_joint_states_receiver()
 {
 	stop_receiver = true;
-	joint_states_connected = !yarp::os::Network::disconnect(yarp_name_sender,yarp_name_joints_state_receiver);
-	boost::unique_lock<boost::mutex> lck(joint_states_queue_mtx);
-	while(!joint_states_queue.empty()){joint_states_queue.pop();}
-	joint_states_queue_cv.notify_all();
-
 }
+
 void CYarpCommInterface::joint_states_receiver_job()
 {
 	Joint_States jstate;
-	while(!stop_receiver && joint_states_connected)
+	while(joint_states_connected)
 	{
-		jstate = *(joint_states_in_port.read());
-		boost::unique_lock<boost::mutex> lck(joint_states_queue_mtx);
-		joint_states_queue.push(jstate);
-		joint_states_queue_cv.notify_all();
+		if(!stop_receiver){
+			jstate = *(joint_states_in_port.read());	
+			boost::unique_lock<boost::mutex> lck(joint_states_queue_mtx);
+			joint_states_queue.push(jstate);
+			joint_states_queue_cv.notify_all();
+		}else{
+			joint_states_connected = !yarp::os::Network::disconnect(yarp_name_sender,yarp_name_joints_state_receiver);		
+			boost::unique_lock<boost::mutex> lck(joint_states_queue_mtx);
+			while(!joint_states_queue.empty()){joint_states_queue.pop();}
+			joint_states_queue_cv.notify_all();
+		}
 	}
 }
 

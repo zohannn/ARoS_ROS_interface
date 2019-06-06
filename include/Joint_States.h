@@ -1,3 +1,6 @@
+#ifndef JOINTS_STATES_H
+#define JOINTS_STATES_H
+
 #include <yarp\os\Portable.h>
 #include <yarp\os\ConnectionWriter.h>
 #include <yarp\os\ConnectionReader.h>
@@ -17,6 +20,8 @@ public:
 	*/
 	std::vector<float> position;
 	std::vector<float> velocity;
+	std::vector<float> velocity_der; // velocity derived from position
+	std::vector<float> acceleration_der; // acceleration derived from velocity_der
 	//EndEffector end_effector_state;
 
 	Joint_States();
@@ -36,9 +41,13 @@ public:
 		// the two classes are effectively swapped
 		swap(first.position, second.position);
 		swap(first.velocity, second.velocity);
+		swap(first.velocity_der, second.velocity_der);
+		swap(first.acceleration_der, second.acceleration_der);
 		//swap(first.end_effector_state, second.end_effector_state);
 	}
 
 	virtual bool write(yarp::os::ConnectionWriter& connection);
 	virtual bool read(yarp::os::ConnectionReader& connection);
 };
+
+#endif //JOINTS_STATES_H

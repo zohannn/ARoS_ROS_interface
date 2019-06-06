@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NODE_HPP
+#define NODE_HPP
 
 // ROS includes
 #include <ros\ros.h>
@@ -6,6 +7,7 @@
 #include <std_msgs/String.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Pose.h>
+#include <sensor_msgs\JointState.h>
 
 // Boost Logging
 #include <boost/log/core.hpp>
@@ -25,6 +27,9 @@
 
 // Object
 #include "Object.h"
+
+// Joints 
+#include "Joint_States.h"
 
 // CNode
 namespace logging = boost::log;
@@ -77,6 +82,10 @@ public:
 	// target publishing
 	void getTargetPos(std::vector<float>& ppos); Quaternionf getTargetQOr(); ros::Publisher getTargetPublisher();
 	void advertiseTarget(std::vector<float>& tar_ppos, Quaternionf& tar_q_oor, std::string topic);
+
+	// joints state publishing
+	void getJointStates(Joint_States& js); ros::Publisher getJointStatePublisher();
+	void advertiseJoints(Joint_States& jstate, std::string topic);
 	
 	
 protected:
@@ -98,7 +107,12 @@ private:
 	// publisher target
 	std::vector<float> tar_pos; Quaternionf tar_q_or; ros::Publisher pubTarget;
 
+	// publisher joints state
+	Joint_States jstate; ros::Publisher pubJoints;
+
 
 };
+
+#endif // NODE_HPP
 
 

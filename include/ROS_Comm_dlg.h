@@ -3,6 +3,7 @@
 #include "Node.h"
 #include <boost\shared_ptr.hpp>
 
+typedef boost::shared_ptr<CNode> rosPtr;
 // finestra di dialogo CROS_Comm_dlg
 
 class CROS_Comm_dlg : public CDialogEx
@@ -43,9 +44,9 @@ public:
 	// set for using the environment variables
 	void setEnvVars(bool r);
 	// set the ROS node
-	void setROSNode(CNode* r);
+	void setROSNode(rosPtr r);
 	// get the ROS node
-	CNode* getROSNode();
+	rosPtr getROSNode();
 	// get the ROS Master URI
 	CString getMasterURI(void);
 	// get the ROS IP address
@@ -71,7 +72,7 @@ public:
 	// label of ROS status
 	CString strStatus;
 	// ros node
-	CNode* node;
+	rosPtr node;
 	afx_msg void OnBnClickedButtonConnect();
 	// control of the button Connect/Disconnect to/from the ROS network
 	CButton m_buttonConnect;

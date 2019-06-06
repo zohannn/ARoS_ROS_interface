@@ -142,8 +142,6 @@ UINT publishChat (LPVOID pParam)
 UINT publishRedColumn (LPVOID pParam)
 {
  
-  ros::Rate loop_rate(10);
-
   CNode* node = (CNode*)pParam;
   ros::Publisher pub = node->getRedColPublisher();
   boost::shared_ptr<Object> obj_ptr = node->getRedColPtr();
@@ -165,7 +163,6 @@ UINT publishRedColumn (LPVOID pParam)
   pub.publish(msg);
 
   ros::spinOnce();
-  loop_rate.sleep();
 
   return 0;
 
@@ -173,8 +170,6 @@ UINT publishRedColumn (LPVOID pParam)
 
 UINT publishGreenColumn (LPVOID pParam)
 {
-
-  ros::Rate loop_rate(10);
 
   CNode* node = (CNode*)pParam;
   ros::Publisher pub = node->getGreenColPublisher();
@@ -197,7 +192,6 @@ UINT publishGreenColumn (LPVOID pParam)
   pub.publish(msg);
 
   ros::spinOnce();
-  loop_rate.sleep();
 
   return 0;
 
@@ -205,7 +199,7 @@ UINT publishGreenColumn (LPVOID pParam)
 
 UINT publishBlueColumn (LPVOID pParam)
 {
-  ros::Rate loop_rate(10);
+
 
   CNode* node = (CNode*)pParam;
   ros::Publisher pub = node->getBlueColPublisher();
@@ -228,7 +222,6 @@ UINT publishBlueColumn (LPVOID pParam)
   pub.publish(msg);
 
   ros::spinOnce();
-  loop_rate.sleep();
 
   return 0;
 
@@ -236,7 +229,6 @@ UINT publishBlueColumn (LPVOID pParam)
 
 UINT publishMagentaColumn (LPVOID pParam)
 {
-  ros::Rate loop_rate(10);
 
   CNode* node = (CNode*)pParam;
   ros::Publisher pub = node->getMagentaColPublisher();
@@ -259,7 +251,6 @@ UINT publishMagentaColumn (LPVOID pParam)
   pub.publish(msg);
 
   ros::spinOnce();
-  loop_rate.sleep();
 
   return 0;
 
@@ -268,8 +259,6 @@ UINT publishMagentaColumn (LPVOID pParam)
 UINT publishTarget (LPVOID pParam)
 {
   
-  ros::Rate loop_rate(10);
-
   CNode* node = (CNode*)pParam;
 
   std::vector<float> tar_ppos; node->getTargetPos(tar_ppos);
@@ -290,7 +279,39 @@ UINT publishTarget (LPVOID pParam)
   pub.publish(msg);
 
   ros::spinOnce();
-  loop_rate.sleep();
+
+  return 0;
+
+}
+
+UINT publishJoints (LPVOID pParam)
+{
+  
+  CNode* node = (CNode*)pParam;
+  Joint_States js; node->getJointStates(js);
+  ros::Publisher pub = node->getJointStatePublisher();
+
+  int n_joints = js.position.size();
+  sensor_msgs::JointState msg;
+  msg.header.frame_id = "States of the joints";
+  msg.name.resize(n_joints);
+  msg.position.resize(n_joints);
+  msg.velocity.resize(n_joints);
+  msg.effort.resize(n_joints);
+
+  std::stringstream ss; std::string ss_str;
+  for(int i=0;i<n_joints;++i){
+    ss.str(""); ss << i; ss_str = ss.str();
+	msg.name[i] = "joint "+ss_str;
+	msg.position[i] = js.position.at(i);
+	msg.velocity[i] = js.velocity_der.at(i);
+	msg.effort[i] = js.acceleration_der.at(i);
+  }
+  
+  pub.publish(msg);
+  
+
+  ros::spinOnce();
 
   return 0;
 
@@ -360,6 +381,16 @@ void CNode::getTargetPos(std::vector<float>& ppos)
 Quaternionf CNode::getTargetQOr()
 {
 	return this->tar_q_or;
+}
+
+void CNode::getJointStates(Joint_States& js)
+{
+	js = this->jstate;
+}
+
+ros::Publisher CNode::getJointStatePublisher()
+{
+	return this->pubJoints;
 }
 
 void CNode::setNodeName(CString name)
@@ -474,6 +505,15 @@ void CNode::advertiseTarget(std::vector<float>& tar_ppos, Quaternionf& tar_q_oor
     CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
 	this->pubTarget = handle_node.advertise<geometry_msgs::PoseStamped>("/"+node_name_str+"/"+topic, 1);
 	AfxBeginThread(publishTarget,this);
+}
+
+void CNode::advertiseJoints(Joint_States& jstate, std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->jstate = jstate;
+	CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->pubJoints = handle_node.advertise<sensor_msgs::JointState>("/"+node_name_str+"/"+topic, 1);
+	AfxBeginThread(publishJoints,this);
 }
 
 

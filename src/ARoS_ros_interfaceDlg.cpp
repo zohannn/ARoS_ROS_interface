@@ -26,7 +26,8 @@ CARoS_ros_interfaceDlg::CARoS_ros_interfaceDlg(CWnd* pParent /*=NULL*/)
 
 CARoS_ros_interfaceDlg::~CARoS_ros_interfaceDlg()
 {
-	stop_joint_updating();
+	this->stop_joint_updating();
+	this->stop_vision_updating();
 }
 
 void CARoS_ros_interfaceDlg::DoDataExchange(CDataExchange* pDX)
@@ -469,45 +470,43 @@ void CARoS_ros_interfaceDlg::EnableVisionObstaclesGroup(bool b)
 
 }
 
-void CARoS_ros_interfaceDlg::updateJointValuesAsync()
+void CARoS_ros_interfaceDlg::updateJointValuesAsync(Joint_States& jstate)
 {
-	Joint_States jstate;
-	if(yarp_upperlimb->getJointState(jstate)){
-		if(right_enabled && !left_enabled){
-			std::vector<float>jpos = jstate.position;
-			std::vector<float>jvel = jstate.velocity;
-			CString s; int precision = 2;
+	if(right_enabled && !left_enabled){
+		std::vector<float>jpos = jstate.position;
+		std::vector<float>jvel = jstate.velocity;
+		CString s; int precision = 2;
 		
-			s.Format(_T("%.*f"),precision,jpos.at(0)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT0)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(1)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT1)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(2)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT2)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(3)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT3)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(4)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT4)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(5)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT5)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(6)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT6)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(7)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT7)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(8)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT8)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(9)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT9)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jpos.at(10)*RAD_TO_DEG_F);GetDlgItem(IDC_POS_RIGHT_JOINT10)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(0)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT0)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(1)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT1)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(2)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT2)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(3)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT3)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(4)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT4)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(5)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT5)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(6)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT6)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(7)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT7)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(8)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT8)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(9)*RAD_TO_DEG_F); GetDlgItem(IDC_POS_RIGHT_JOINT9)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jpos.at(10)*RAD_TO_DEG_F);GetDlgItem(IDC_POS_RIGHT_JOINT10)->SetWindowTextW(s);
 
-			s.Format(_T("%.*f"),precision,jvel.at(0)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT0)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(1)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT1)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(2)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT2)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(3)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT3)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(4)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT4)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(5)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT5)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(6)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT6)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(7)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT7)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(8)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT8)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(9)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT9)->SetWindowTextW(s);
-			s.Format(_T("%.*f"),precision,jvel.at(10)*RAD_TO_DEG_F);GetDlgItem(IDC_VEL_RIGHT_JOINT10)->SetWindowTextW(s);
-		}else if(!right_enabled && left_enabled){
-			// TO DO
-		}else if(right_enabled && left_enabled){
-			//TO DO
-		}
+		s.Format(_T("%.*f"),precision,jvel.at(0)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT0)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(1)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT1)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(2)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT2)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(3)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT3)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(4)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT4)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(5)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT5)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(6)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT6)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(7)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT7)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(8)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT8)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(9)*RAD_TO_DEG_F); GetDlgItem(IDC_VEL_RIGHT_JOINT9)->SetWindowTextW(s);
+		s.Format(_T("%.*f"),precision,jvel.at(10)*RAD_TO_DEG_F);GetDlgItem(IDC_VEL_RIGHT_JOINT10)->SetWindowTextW(s);
+	}else if(!right_enabled && left_enabled){
+		// TO DO
+	}else if(right_enabled && left_enabled){
+		//TO DO
 	}
 }
+
 void CARoS_ros_interfaceDlg::updateJointValues()
 {
 
@@ -655,7 +654,7 @@ void CARoS_ros_interfaceDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	if(nID == SC_CLOSE)
 	{
 		closing = true;
-		if(start_joint_update || yarp_vision->connected){
+		if(yarp_upperlimb->connected || yarp_vision->connected){
 			AfxMessageBox(_T("Close the connections with the YARP modules, then exit."));
 		}else{
 			CDialogEx::OnSysCommand(nID, lParam);
@@ -712,12 +711,12 @@ void CARoS_ros_interfaceDlg::OnBnClickedButtonTalk()
 	ros_node->advertise("chatter1");
 }
 
-void CARoS_ros_interfaceDlg::setROSNode(CNode* r)
+void CARoS_ros_interfaceDlg::setROSNode(rosPtr r)
 {
 	ros_node = r;
 }
 
-CNode* CARoS_ros_interfaceDlg::getROSNode()
+rosPtr CARoS_ros_interfaceDlg::getROSNode()
 {
 	return ros_node;
 }

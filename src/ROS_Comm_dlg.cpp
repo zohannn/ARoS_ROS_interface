@@ -133,14 +133,14 @@ void CROS_Comm_dlg::OnBnClickedCheckEnvVars()
 	}
 }
 
-void CROS_Comm_dlg::setROSNode(CNode* r)
+void CROS_Comm_dlg::setROSNode(rosPtr r)
 {
-	node = r;
+	this->node = r;
 }
 
-CNode* CROS_Comm_dlg::getROSNode()
+rosPtr CROS_Comm_dlg::getROSNode()
 {
-	return node;
+	return this->node;
 }
 
 bool CROS_Comm_dlg::getROSConn()

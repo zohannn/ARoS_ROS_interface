@@ -46,17 +46,17 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 	look_home.at(2) = 130.60f; //z
 
 	// ROS NODE
-	ros_node = new CNode();
+	ros_node = boost::make_shared<CNode>();
 	ros_node->CreateThread(CREATE_SUSPENDED);
 	ros_node->m_bAutoDelete=false;
 	ros_comm_dlg.setROSNode(ros_node);
 	main_dlg.setROSNode(ros_node);
 
 
-	yarp_upperlimb = new CYarpCommInterface("/aros_ros_interface/upperlimb",str_upperlimb_server.c_str());  // YARP Upperlimb Client
+	yarp_upperlimb = new CYarpCommInterface("/aros_ros_interface/upperlimb",str_upperlimb_server.c_str());
 	main_dlg.setYARPUpperlimb(yarp_upperlimb);
 
-	yarp_vision = new CYarpCommInterface("/aros_ros_interface/vision",str_vision_server.c_str());  // YARP Vision Client
+	yarp_vision = new CYarpCommInterface("/aros_ros_interface/vision",str_vision_server.c_str());
 	main_dlg.setYARPVision(yarp_vision);
 
 	b_ros_connected = false;
@@ -70,7 +70,14 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 
 	// signals
 	ros_node->sig_log.connect(boost::bind(&CARoS_ros_interfaceDlg::addLogLine,&main_dlg,_1));
-	yarp_upperlimb->sig_update.connect(boost::bind(&CARoS_ros_interfaceDlg::updateJointValuesAsync,&main_dlg));
+	
+	// buffers
+	this->samples_upperlimb_pos = 0;
+	this->samples_upperlimb_vel = 0;
+	this->N_filter_length = 5;
+	this->buffer_size = 11;
+	this->upperlimb_pos_buff = boost::make_shared<CircularBuffers<float>>(this->buffer_size, this->N_filter_length);
+	this->upperlimb_vel_buff = boost::make_shared<CircularBuffers<float>>(this->buffer_size, this->N_filter_length);
 
 }
 
@@ -139,13 +146,6 @@ BOOL CARoS_ros_interfaceApp::InitInstance()
 		delete pShellManager;
 	}
 
-	if(ros_node!=NULL){
-		delete(ros_node);
-		//delete ros_node;
-		//ros_node = NULL;
-	}
-
-
 	if(yarp_upperlimb->connected){
 		yarp_upperlimb->close();
 		yarp_upperlimb->connected=false;
@@ -162,7 +162,6 @@ BOOL CARoS_ros_interfaceApp::InitInstance()
 	}
 	delete yarp_vision;
 	yarp_vision = nullptr;
-	
 
 	yarp_net.fini(); // Finilize the YARP network
 
@@ -262,14 +261,14 @@ void CARoS_ros_interfaceApp::OnYarpUpperlimb()
 		{
 			main_dlg.addLogLine(_T("Joint States receiver started"));
 			b_yarp_upperlimb_states = true;	
-			main_dlg.start_joint_updating();
+			//main_dlg.start_joint_updating();
 			update_joints_values_thd = boost::thread(boost::bind(&CARoS_ros_interfaceApp::updateUpperLimbValues, this));
 
 		}
 	}else{
 		yarp_upperlimb->stop_joint_states_receiver();
 		b_yarp_upperlimb_states = false;	
-		main_dlg.stop_joint_updating();
+		//main_dlg.stop_joint_updating();
 		main_dlg.addLogLine(_T("Joint States receiver stopped"));
 	}
 }
@@ -316,24 +315,126 @@ void CARoS_ros_interfaceApp::OnYarpVision()
 	}
 }
 
+int CARoS_ros_interfaceApp::binomialCoeff(int n, int k)
+{
+    // https://www.geeksforgeeks.org/binomial-coefficient-dp-9/
+
+    if (k>=0 && k<=n)
+    {
+		int **C;
+		// allocate memory
+		C = new int*[n+1]();
+		for (int ii = 0; ii < (n+1); ++ii)
+			C[ii] = new int[k+1]();
+		//int C[n + 1][k + 1];
+        int i, j;
+
+        // Caculate value of Binomial Coefficient
+        // in bottom up manner
+        for (i = 0; i <= n; i++)
+        {
+            for (j = 0; j <= min(i, k); j++)
+            {
+                // Base Cases
+                if (j == 0 || j == i)
+                    C[i][j] = 1;
+
+                // Calculate value using previosly
+                // stored values
+                else
+                    C[i][j] = C[i - 1][j - 1] +
+                              C[i - 1][j];
+            }
+        }
+
+		int cc = C[n][k];
+		// don't forget to free your memory!
+		for (int ii = 0; ii < (n+1); ++ii)
+			delete[] C[ii];
+		delete[] C;
+
+		// return 
+        return cc;
+    }else{
+        return 0;
+    }
+}
+
+float CARoS_ros_interfaceApp::getNoiseRobustDerivate(int N, float h, std::deque<float>& buff)
+{
+    // http://www.holoborodko.com/pavel/numerical-methods/numerical-derivative/smooth-low-noise-differentiators/#noiserobust_2
+    static const std::runtime_error ex_cap(std::string("The capacity of the buffer differs the given filter length"));
+    static const std::runtime_error ex_length(std::string("The filter length must be greater or equal to 5"));
+    if(N>=5)
+    {
+        if(N==buff.size())
+        {
+            int M = (N-1)/2;
+            int m = (N-3)/2;
+            float sum=0.0;
+            for(int k=1;k<=M;++k)
+            {
+                float c1 = this->binomialCoeff(2*m,(m-k+1));
+                float c2 = this->binomialCoeff(2*m,(m-k-1));
+                float ck = (1/pow(static_cast<float>(2),static_cast<float>((2*m)+1)))*(c1-c2);
+                sum+=ck*(buff[M+k]-buff[M-k]);
+            }
+            float der = sum/h;
+            return der;
+        }else{
+            throw ex_cap;
+        }
+    }else{
+        throw ex_length;
+    }
+}
+
 void CARoS_ros_interfaceApp::updateUpperLimbValues()
 {
+	float time_step = 10; // ms
 	while(b_yarp_upperlimb_states)
 	{
 		Joint_States jstate;
 		if(yarp_upperlimb->getJointState(jstate))
 		{
-			// send to the ROS network
+			main_dlg.updateJointValuesAsync(jstate);
+			if(b_ros_connected){
+				// derive velocity 
+				this->upperlimb_pos_buff->push(jstate.position);
+				if(this->samples_upperlimb_pos==this->N_filter_length-1 && this->upperlimb_pos_buff->full()){
+					for(size_t i=0; i< jstate.position.size();++i)
+					{
+						jstate.velocity_der.at(i) = this->getNoiseRobustDerivate(this->N_filter_length,time_step,this->upperlimb_pos_buff->at(i));
+					}
+				}else{this->samples_upperlimb_pos++;}
+
+				// derive acceleration
+				if(this->samples_upperlimb_pos==this->N_filter_length-1){
+					this->upperlimb_vel_buff->push(jstate.velocity_der);
+					if(this->samples_upperlimb_vel==this->N_filter_length-1 && this->upperlimb_vel_buff->full()){
+						for(size_t i=0; i< jstate.velocity_der.size();++i)
+						{
+							jstate.acceleration_der.at(i) = this->getNoiseRobustDerivate(this->N_filter_length,time_step,this->upperlimb_vel_buff->at(i));
+						}
+					}else{this->samples_upperlimb_vel++;}
+				}
+
+				// send to the ROS network
+				this->ros_node->advertiseJoints(jstate,"joints_state");
+			}
 		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(time_step)); // loop rate 
 	}
 }
 
 void CARoS_ros_interfaceApp::updateVisionValues()
 {
+	float time_step = 10; // ms
 	while(b_yarp_vision_states)
 	{
 		if(yarp_vision->getVisionInfo() && b_ros_connected)
 		{
+			// send to the ROS network
 			//objects
 			this->ros_node->advertiseRedColumn(yarp_vision->getRedColumn(), "object_pose/red_column");
 			this->ros_node->advertiseGreenColumn(yarp_vision->getGreenColumn(), "object_pose/green_column");
@@ -345,6 +446,7 @@ void CARoS_ros_interfaceApp::updateVisionValues()
 			Quaternionf tar_q_oor = yarp_vision->getRedColumn()->getTarQOr();
 			this->ros_node->advertiseTarget(tar_ppos,tar_q_oor, "target_pose");
 		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(time_step)); // loop rate 
 	}
 }
 
