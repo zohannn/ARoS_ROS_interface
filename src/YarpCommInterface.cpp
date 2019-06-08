@@ -562,8 +562,8 @@ void CYarpCommInterface::waitAsync()
 	wait_async_thd = boost::thread(boost::bind(&CYarpCommInterface::waitTrajEndAsync, this));
 	while(!async_finished)
 	{
-		sig_update();
-		//boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+		sig_joints_update();
+		sig_vision_update();
 	}
 }
 
@@ -573,8 +573,8 @@ void CYarpCommInterface::waitVelAsync()
 	vel_wait_async_thd = boost::thread(boost::bind(&CYarpCommInterface::waitVelTrajEndAsync, this));
 	while(!vel_async_finished)
 	{
-		sig_update();
-		//boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+		sig_joints_update();
+		sig_vision_update();
 	}
 }
 

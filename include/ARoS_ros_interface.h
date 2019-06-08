@@ -40,6 +40,8 @@ private:
 	std::vector<float> look_home; // home looking position 
 	boost::thread update_joints_values_thd; // thread to update the values of the joints
 	void  updateUpperLimbValues (); // Thread upperlimb values
+	void updateJoints();
+	void updateVision();
 	boost::thread update_vision_values_thd; // thread to update the vision info
 	void  updateVisionValues (); // Thread vision values
 

@@ -70,7 +70,10 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 
 	// signals
 	ros_node->sig_log.connect(boost::bind(&CARoS_ros_interfaceDlg::addLogLine,&main_dlg,_1));
+	yarp_upperlimb->sig_joints_update.connect(boost::bind(&CARoS_ros_interfaceApp::updateJoints,this));
+	yarp_upperlimb->sig_vision_update.connect(boost::bind(&CARoS_ros_interfaceApp::updateVision,this));
 	
+
 	// buffers
 	this->samples_upperlimb_pos = 0;
 	this->samples_upperlimb_vel = 0;
@@ -389,12 +392,10 @@ float CARoS_ros_interfaceApp::getNoiseRobustDerivate(int N, float h, std::deque<
     }
 }
 
-void CARoS_ros_interfaceApp::updateUpperLimbValues()
+void CARoS_ros_interfaceApp::updateJoints()
 {
-	float time_step = 10; // ms
-	while(b_yarp_upperlimb_states)
-	{
-		Joint_States jstate;
+	float time_step = 5; // ms
+	Joint_States jstate;
 		if(yarp_upperlimb->getJointState(jstate))
 		{
 			main_dlg.updateJointValuesAsync(jstate);
@@ -424,30 +425,42 @@ void CARoS_ros_interfaceApp::updateUpperLimbValues()
 			}
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(time_step)); // loop rate 
+}
+
+void CARoS_ros_interfaceApp::updateVision()
+{
+	float time_step = 5; // ms
+	if(yarp_vision->getVisionInfo() && b_ros_connected)
+	{
+		// send to the ROS network
+		//objects
+		this->ros_node->advertiseRedColumn(yarp_vision->getRedColumn(), "object_pose/red_column");
+		this->ros_node->advertiseGreenColumn(yarp_vision->getGreenColumn(), "object_pose/green_column");
+		this->ros_node->advertiseBlueColumn(yarp_vision->getBlueColumn(), "object_pose/blue_column");
+		this->ros_node->advertiseMagentaColumn(yarp_vision->getMagentaColumn(), "object_pose/magenta_column");
+
+		//target
+		std::vector<float>tar_ppos; yarp_vision->getRedColumn()->getTarPos(tar_ppos);
+		Quaternionf tar_q_oor = yarp_vision->getRedColumn()->getTarQOr();
+		this->ros_node->advertiseTarget(tar_ppos,tar_q_oor, "target_pose");
 	}
+	boost::this_thread::sleep(boost::posix_time::milliseconds(time_step)); // loop rate 
+}
+
+void CARoS_ros_interfaceApp::updateUpperLimbValues()
+{	
+	while(b_yarp_upperlimb_states)
+	{
+		this->updateJoints();
+	} // while
 }
 
 void CARoS_ros_interfaceApp::updateVisionValues()
 {
-	float time_step = 10; // ms
 	while(b_yarp_vision_states)
 	{
-		if(yarp_vision->getVisionInfo() && b_ros_connected)
-		{
-			// send to the ROS network
-			//objects
-			this->ros_node->advertiseRedColumn(yarp_vision->getRedColumn(), "object_pose/red_column");
-			this->ros_node->advertiseGreenColumn(yarp_vision->getGreenColumn(), "object_pose/green_column");
-			this->ros_node->advertiseBlueColumn(yarp_vision->getBlueColumn(), "object_pose/blue_column");
-			this->ros_node->advertiseMagentaColumn(yarp_vision->getMagentaColumn(), "object_pose/magenta_column");
-
-			//target
-			std::vector<float>tar_ppos; yarp_vision->getRedColumn()->getTarPos(tar_ppos);
-			Quaternionf tar_q_oor = yarp_vision->getRedColumn()->getTarQOr();
-			this->ros_node->advertiseTarget(tar_ppos,tar_q_oor, "target_pose");
-		}
-		boost::this_thread::sleep(boost::posix_time::milliseconds(time_step)); // loop rate 
-	}
+		this->updateVision();
+	}// while
 }
 
 

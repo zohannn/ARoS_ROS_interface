@@ -62,7 +62,8 @@ public:
 	std::string yarp_name;
 	std::string yarp_name_joints_state_receiver;
 	std::string yarp_name_sender;
-	boost::signal<void ()> sig_update;
+	boost::signal<void ()> sig_joints_update;
+	boost::signal<void ()> sig_vision_update;
 	//int flag_all;// 1 : OK; 0: Error
 	//int flag_comm;
 	//int flag_dev;
