@@ -232,6 +232,7 @@ void CARoS_ros_interfaceApp::OnYarpUpperlimb()
 		{
 			yarp_upperlimb->connected=true;
 			status = _T("Node is connected to the Upperlimb YARP server");
+			//main_dlg.EnableJointsLowPassFilterGroup(true);
 			m_pMainWnd->GetMenu()->CheckMenuItem(ID_YARP_UPPERLIMB,MF_CHECKED|MF_BYCOMMAND);
 			switch(upperlimb_mode){
 				case 0:	default: main_dlg.EnableRightUpperLimbGroup(true); main_dlg.EnableLeftUpperLimbGroup(false); break;
@@ -246,6 +247,7 @@ void CARoS_ros_interfaceApp::OnYarpUpperlimb()
 			main_dlg.EnableRightUpperLimbGroup(false); 
 			main_dlg.EnableLeftUpperLimbGroup(false);
 			main_dlg.EnableExecModeGroup(false);
+			//main_dlg.EnableJointsLowPassFilterGroup(false);
 		}
 	}else{
 		// connected
@@ -256,6 +258,7 @@ void CARoS_ros_interfaceApp::OnYarpUpperlimb()
 		main_dlg.EnableRightUpperLimbGroup(false); 
 		main_dlg.EnableLeftUpperLimbGroup(false);
 		main_dlg.EnableExecModeGroup(false);
+		//main_dlg.EnableJointsLowPassFilterGroup(false);
 	}
 	main_dlg.addLogLine(status);
 	if(yarp_upperlimb->connected)
@@ -395,12 +398,14 @@ float CARoS_ros_interfaceApp::getNoiseRobustDerivate(int N, float h, std::deque<
 void CARoS_ros_interfaceApp::updateJoints()
 {
 	float time_step = 5; // ms
-	Joint_States jstate;
+	Joint_States jstate;	
+	//jstate.setLowPassFilters(main_dlg.getJointsLpfFreq(),main_dlg.getJointsLpfDt());
 		if(yarp_upperlimb->getJointState(jstate))
 		{
 			main_dlg.updateJointValuesAsync(jstate);
 			if(b_ros_connected){
-				// derive velocity 
+				//std::vector<float> ppos; jstate.getFilteredPositions(ppos);
+				// derive velocity 				
 				this->upperlimb_pos_buff->push(jstate.position);
 				if(this->samples_upperlimb_pos==this->N_filter_length-1 && this->upperlimb_pos_buff->full()){
 					for(size_t i=0; i< jstate.position.size();++i)

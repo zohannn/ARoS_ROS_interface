@@ -100,7 +100,7 @@ int CNode::Run()
     //Q_EMIT rosShutdown(); // used to signal the gui for a shutdown (useful to roslaunch)
 	return 0; 
 }
-
+/**
 UINT publishChat (LPVOID pParam)
 {
   int count = 0;
@@ -110,9 +110,7 @@ UINT publishChat (LPVOID pParam)
   ros::Publisher pub = node->getPublisher();
   while (ros::ok())
   {
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
+
     std_msgs::String msg;
 
     std::stringstream ss;
@@ -121,12 +119,7 @@ UINT publishChat (LPVOID pParam)
 
     //ROS_INFO("%s", msg.data.c_str());
 
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
+
     pub.publish(msg);
 
     ros::spinOnce();
@@ -138,6 +131,7 @@ UINT publishChat (LPVOID pParam)
   return 0;
 
 }
+*/
 
 UINT publishRedColumn (LPVOID pParam)
 {
@@ -299,11 +293,14 @@ UINT publishJoints (LPVOID pParam)
   msg.velocity.resize(n_joints);
   msg.effort.resize(n_joints);
 
+  //std::vector<float> ppos; js.getFilteredPositions(ppos);
+
   std::stringstream ss; std::string ss_str;
   for(int i=0;i<n_joints;++i){
     ss.str(""); ss << i; ss_str = ss.str();
 	msg.name[i] = "joint "+ss_str;
 	msg.position[i] = js.position.at(i);
+	//msg.position[i] = ppos.at(i);
 	msg.velocity[i] = js.velocity_der.at(i);
 	msg.effort[i] = js.acceleration_der.at(i);
   }
@@ -323,10 +320,12 @@ CString CNode::getNodeName()
 	return node_name;
 }
 
+/**
 ros::Publisher CNode::getPublisher()
 {
 	return pubChat;
 }
+*/
 
 ros::Publisher CNode::getRedColPublisher()
 {
@@ -433,7 +432,7 @@ void CNode::init_log()
         logging::trivial::severity >= logging::trivial::info
     );
 }
-
+/**
 void CNode::chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
 	//ROS_INFO("I heard: [%s]", msg->data.c_str());
@@ -442,15 +441,17 @@ void CNode::chatterCallback(const std_msgs::String::ConstPtr& msg)
 	CString str = str_init + str_data;
 	sig_log(str);
 }
-
+*/
+/**
 void CNode::listen()
 {	
 	ros::NodeHandle handle_node; // handle of the ROS node
 	subChat = handle_node.subscribe("chatter",1000,&CNode::chatterCallback,this);
 }
+*/
 
 
-
+/*
 void CNode::advertise(std::string topic)
 {
 
@@ -460,6 +461,7 @@ void CNode::advertise(std::string topic)
 	AfxBeginThread(publishChat,this);
 
 }
+*/
 
 void CNode::advertiseRedColumn(boost::shared_ptr<Object> obj, std::string topic)
 {

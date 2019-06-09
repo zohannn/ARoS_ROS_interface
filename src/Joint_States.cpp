@@ -3,15 +3,23 @@
 Joint_States::Joint_States()
 {
 	//end_effector_state = EndEffector::Moving;
+	/*
+	lpf_joints.resize(11);
+	for(int i=0;i<this->lpf_joints.size();++i){
+		this->lpf_joints.at(i).reset(new LowPassFilter()); 
+	}
+	*/
 }
 
 Joint_States::Joint_States(const Joint_States & other)
 {
 	position = other.position;
+	//position_filtered = other.position_filtered;
 	velocity = other.velocity;
 	velocity_der = other.velocity_der;
 	acceleration_der = other.acceleration_der;
-
+	
+	//lpf_joints = other.lpf_joints;
 	//end_effector_state = other.end_effector_state;
 }
 
@@ -46,12 +54,14 @@ bool Joint_States::read(yarp::os::ConnectionReader& connection) {
 	//read number of incoming joints
 	size_t joints_nr = static_cast<size_t>(connection.expectInt());
 	position.resize(joints_nr);
+	//position_filtered.resize(joints_nr);
 	velocity.resize(joints_nr);
 	velocity_der.resize(joints_nr);
 	acceleration_der.resize(joints_nr);
 
 	for (size_t i = 0; i < position.size(); i++){
 		position[i] = static_cast<float>(connection.expectDouble());
+		//position_filtered[i] = this->lpf_joints.at(i)->update(position[i]);
 		velocity_der[i] = 0.0;
 		acceleration_der[i] = 0.0;
 	}
@@ -63,3 +73,17 @@ bool Joint_States::read(yarp::os::ConnectionReader& connection) {
 
 	return !connection.isError();
 }
+/*
+void Joint_States::setLowPassFilters(float freq, float dt)
+{
+	for(int i=0;i<this->lpf_joints.size();++i){
+		this->lpf_joints.at(i)->setCutOffFrequency(freq); this->lpf_joints.at(i)->setDeltaTime(dt);
+	}
+}
+*/
+/*
+void Joint_States::getFilteredPositions(std::vector<float>& ppos)
+{
+	ppos = this->position_filtered;
+}
+*/

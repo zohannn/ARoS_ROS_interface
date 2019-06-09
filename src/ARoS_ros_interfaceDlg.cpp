@@ -40,8 +40,8 @@ BEGIN_MESSAGE_MAP(CARoS_ros_interfaceDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_LISTEN, &CARoS_ros_interfaceDlg::OnBnClickedButtonListen)
-	ON_BN_CLICKED(IDC_BUTTON_TALK, &CARoS_ros_interfaceDlg::OnBnClickedButtonTalk)
+	//ON_BN_CLICKED(IDC_BUTTON_LISTEN, &CARoS_ros_interfaceDlg::OnBnClickedButtonListen)
+	//ON_BN_CLICKED(IDC_BUTTON_TALK, &CARoS_ros_interfaceDlg::OnBnClickedButtonTalk)
 	ON_BN_CLICKED(IDC_BUTTON_HOME_RIGHT_JOINT0, &CARoS_ros_interfaceDlg::onBnClickedButtonRightHome0)
 	ON_BN_CLICKED(IDC_BUTTON_HOME_RIGHT_JOINT1, &CARoS_ros_interfaceDlg::onBnClickedButtonRightHome1)
 	ON_BN_CLICKED(IDC_BUTTON_HOME_RIGHT_JOINT2, &CARoS_ros_interfaceDlg::onBnClickedButtonRightHome2)
@@ -100,6 +100,7 @@ BOOL CARoS_ros_interfaceDlg::OnInitDialog()
 	EnableLeftUpperLimbGroup(false); left_enabled = false;
 	EnableExecModeGroup(false);
 	EnableVisionGroup(false);
+	EnableJointsLowPassFilterGroup(false);
 	CheckDlgButton(IDC_RADIO_POS,1);
 	CheckDlgButton(IDC_CHECK_OFFLINE,1);
 	SetDlgItemText(IDC_EDIT_MICRO,_T("1"));
@@ -107,6 +108,8 @@ BOOL CARoS_ros_interfaceDlg::OnInitDialog()
 	SetDlgItemText(IDC_EDIT_DELTA_TIME_POS,_T("1"));
 	SetDlgItemText(IDC_EDIT_CUTOFF_FREQ_OR,_T("0.05"));
 	SetDlgItemText(IDC_EDIT_DELTA_TIME_OR,_T("1"));
+	SetDlgItemText(IDC_EDIT_JOINTS_CUTOFF_FREQ,_T("1"));
+	SetDlgItemText(IDC_EDIT_JOINTS_DELTA_TIME,_T("0.05"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -312,6 +315,14 @@ void CARoS_ros_interfaceDlg::EnableLeftArmGroup(bool b)
 	GetDlgItem(IDC_BUTTON_HOME_LEFT_JOINT6)->EnableWindow(b);
 }
 
+void CARoS_ros_interfaceDlg::EnableJointsLowPassFilterGroup(bool b)
+{
+	GetDlgItem(IDC_STATIC_JOINTS_LOWPASSFILTER)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_JOINTS_CUTOFF_FREQ)->EnableWindow(b);
+	GetDlgItem(IDC_EDIT_JOINTS_CUTOFF_FREQ)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_JOINTS_DELTA_TIME)->EnableWindow(b);
+	GetDlgItem(IDC_EDIT_JOINTS_DELTA_TIME)->EnableWindow(b);	
+}
 
 void CARoS_ros_interfaceDlg::EnableRightUpperLimbGroup(bool b)
 {
@@ -340,8 +351,23 @@ void CARoS_ros_interfaceDlg::EnableVisionGroup(bool b)
 	GetDlgItem(IDC_STATIC_VISION)->EnableWindow(b);
 	EnableVisionTargetGroup(b);
 	EnableVisionObstaclesGroup(b);
+	EnableVisionLowPassFilterGroup(b);
 }
 
+void CARoS_ros_interfaceDlg::EnableVisionLowPassFilterGroup(bool b)
+{
+	GetDlgItem(IDC_STATIC_OBJ_LOW_PASS_FILTER)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_POS)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_CUTOFF_FREQ_POS)->EnableWindow(b);
+	GetDlgItem(IDC_EDIT_CUTOFF_FREQ_POS)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_DELTA_TIME_POS)->EnableWindow(b);
+	GetDlgItem(IDC_EDIT_DELTA_TIME_POS)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_OR)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_CUTOFF_FREQ_OR)->EnableWindow(b);
+	GetDlgItem(IDC_EDIT_CUTOFF_FREQ_OR)->EnableWindow(b);
+	GetDlgItem(IDC_STATIC_DELTA_TIME_OR)->EnableWindow(b);
+	GetDlgItem(IDC_EDIT_DELTA_TIME_OR)->EnableWindow(b);	
+}
 void CARoS_ros_interfaceDlg::EnableVisionTargetGroup(bool b)
 {
 	GetDlgItem(IDC_STATIC_TARGET)->EnableWindow(b);
@@ -647,6 +673,19 @@ void CARoS_ros_interfaceDlg::updateVisionValues()
 	}
 }
 
+float CARoS_ros_interfaceDlg::getJointsLpfFreq()
+{
+	CString str_freq;
+	GetDlgItemText(IDC_EDIT_JOINTS_CUTOFF_FREQ,str_freq);
+	return _ttof(str_freq);				
+}
+
+float CARoS_ros_interfaceDlg::getJointsLpfDt()
+{
+	CString str_dt;
+	GetDlgItemText(IDC_EDIT_JOINTS_DELTA_TIME,str_dt);
+	return _ttof(str_dt);				
+}
 
 void CARoS_ros_interfaceDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -701,6 +740,7 @@ HCURSOR CARoS_ros_interfaceDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+/**
 void CARoS_ros_interfaceDlg::OnBnClickedButtonListen()
 {
 	ros_node->listen();
@@ -710,6 +750,7 @@ void CARoS_ros_interfaceDlg::OnBnClickedButtonTalk()
 {
 	ros_node->advertise("chatter1");
 }
+*/
 
 void CARoS_ros_interfaceDlg::setROSNode(rosPtr r)
 {

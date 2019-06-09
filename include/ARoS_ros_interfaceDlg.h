@@ -49,6 +49,8 @@ public:
 	void start_vision_updating(); // start update the vision info
 	void stop_vision_updating(); // stop update the vision info
 
+	float getJointsLpfFreq(); // get the freq. of the lpf of the joints 
+	float getJointsLpfDt(); // get the dt of the lpf of the joints
 
 // Implementation
 protected:
@@ -65,9 +67,9 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	// listen /chatter
-	afx_msg void OnBnClickedButtonListen();
+	//afx_msg void OnBnClickedButtonListen();
 	// TALK /chatter1
-	afx_msg void OnBnClickedButtonTalk();
+	//afx_msg void OnBnClickedButtonTalk();
 
 	// right home joint 0 
 	afx_msg void onBnClickedButtonRightHome0();
@@ -138,8 +140,10 @@ public:
 	void EnableLeftUpperLimbGroup(bool b); bool left_enabled;
 	void EnableLeftArmGroup(bool b);
 	void EnableLeftHandGroup(bool b);
+	void EnableJointsLowPassFilterGroup(bool b);
 	void EnableVisionTargetGroup(bool b);
 	void EnableVisionObstaclesGroup(bool b);
+	void EnableVisionLowPassFilterGroup(bool b);
 	void EnableVisionGroup(bool b);
 
 	// load a task

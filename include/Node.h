@@ -58,10 +58,10 @@ public:
 	int Run();
 	CString getNodeName();
 	void setNodeName(CString name);
-	void listen();
-	void advertise(std::string topic);
+	//void listen();
+	//void advertise(std::string topic);
 	boost::signal< void(CString) > sig_log;
-	ros::Publisher getPublisher();
+	//ros::Publisher getPublisher();
 
 	// red column publishing
 	boost::shared_ptr<Object> getRedColPtr(); ros::Publisher getRedColPublisher();
@@ -95,9 +95,9 @@ protected:
 private:
 	CString node_name;
 	void init_log();
-	void chatterCallback(const std_msgs::String::ConstPtr& msg);
-	ros::Subscriber subChat; /**< ROS subscriber for information about /chatter */
-	ros::Publisher pubChat;
+	//void chatterCallback(const std_msgs::String::ConstPtr& msg);
+	//ros::Subscriber subChat; /**< ROS subscriber for information about /chatter */
+	//ros::Publisher pubChat;
 	// publisher objects
 	boost::shared_ptr<Object> redColumnPtr; ros::Publisher pubRedColumn;
 	boost::shared_ptr<Object> greenColumnPtr; ros::Publisher pubGreenColumn;
