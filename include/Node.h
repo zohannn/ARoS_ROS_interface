@@ -8,6 +8,9 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Pose.h>
 #include <sensor_msgs\JointState.h>
+#include <std_msgs\MultiArrayDimension.h>
+#include <std_msgs\MultiArrayLayout.h>
+#include <std_msgs\Float32MultiArray.h>
 
 // Boost Logging
 #include <boost/log/core.hpp>
@@ -61,6 +64,7 @@ public:
 	//void listen();
 	//void advertise(std::string topic);
 	boost::signal< void(CString) > sig_log;
+	boost::signal< void(std::vector<float>&) > sig_joints;
 	//ros::Publisher getPublisher();
 
 	// red column publishing
@@ -87,7 +91,13 @@ public:
 	void getJointStates(Joint_States& js); ros::Publisher getJointStatePublisher();
 	void advertiseJoints(Joint_States& jstate, std::string topic);
 	
-	
+	// joints subscribing 
+	void SetJointsCallback(const std_msgs::Float32MultiArray::ConstPtr& arr);
+	void subscribeSetJoints(std::string topic);
+	void unsubscribeSetJoints();
+
+	bool isConnected();
+
 protected:
 	const char * WinGetEnv(const char * name);
 	DECLARE_MESSAGE_MAP()
@@ -95,6 +105,7 @@ protected:
 private:
 	CString node_name;
 	void init_log();
+	bool connected; // true if the node is connected to the ROS network
 	//void chatterCallback(const std_msgs::String::ConstPtr& msg);
 	//ros::Subscriber subChat; /**< ROS subscriber for information about /chatter */
 	//ros::Publisher pubChat;
@@ -110,6 +121,8 @@ private:
 	// publisher joints state
 	Joint_States jstate; ros::Publisher pubJoints;
 
+	// subscriber set_real_joints;
+	ros::Subscriber subJoints;
 
 };
 

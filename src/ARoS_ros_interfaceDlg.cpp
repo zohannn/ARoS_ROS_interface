@@ -110,6 +110,7 @@ BOOL CARoS_ros_interfaceDlg::OnInitDialog()
 	SetDlgItemText(IDC_EDIT_DELTA_TIME_OR,_T("1"));
 	SetDlgItemText(IDC_EDIT_JOINTS_CUTOFF_FREQ,_T("1"));
 	SetDlgItemText(IDC_EDIT_JOINTS_DELTA_TIME,_T("0.05"));
+	this->topic_set_joints = "/motion_manager/set_real_joints";
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -977,6 +978,8 @@ void CARoS_ros_interfaceDlg::onBnClickedCheckOffline()
 		CheckDlgButton(IDC_RADIO_POS,1);
 		CheckDlgButton(IDC_RADIO_VEL,0);
 		EnableOffLineModeGroup(true);
+		if(this->ros_node->isConnected())
+			this->ros_node->unsubscribeSetJoints();
 		addLogLine(_T("OFF-LINE mode"));	
 	}else{
 		GetDlgItem(IDC_RADIO_POS)->EnableWindow(false);
@@ -984,7 +987,13 @@ void CARoS_ros_interfaceDlg::onBnClickedCheckOffline()
 		CheckDlgButton(IDC_RADIO_POS,0);
 		CheckDlgButton(IDC_RADIO_VEL,1);
 		EnableOffLineModeGroup(false);
-		addLogLine(_T("ON-LINE mode: only velocity control is allowed"));	
+		addLogLine(_T("ON-LINE mode: only velocity control is allowed"));
+		if(this->ros_node->isConnected()){
+			this->ros_node->subscribeSetJoints(this->topic_set_joints);
+			addLogLine(_T("ON-LINE mode: ROS node subscribed"));
+		}else{
+			addLogLine(_T("ON-LINE mode: connect to the ROS network to get the joints values"));
+		}
 	}
 }
 

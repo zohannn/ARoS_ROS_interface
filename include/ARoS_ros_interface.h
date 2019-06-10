@@ -44,6 +44,7 @@ private:
 	void updateVision();
 	boost::thread update_vision_values_thd; // thread to update the vision info
 	void  updateVisionValues (); // Thread vision values
+	void setJoints(std::vector<float>& arr_vel); // set the joints of the upperlimb 
 
 	// buffers
 	int samples_upperlimb_pos; /**< counter to count N_filter_length points for derivation of upperlimb position */

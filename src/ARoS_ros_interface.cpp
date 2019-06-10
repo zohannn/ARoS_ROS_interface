@@ -70,6 +70,7 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 
 	// signals
 	ros_node->sig_log.connect(boost::bind(&CARoS_ros_interfaceDlg::addLogLine,&main_dlg,_1));
+	ros_node->sig_joints.connect(boost::bind(&CARoS_ros_interfaceApp::setJoints,this,_1));
 	yarp_upperlimb->sig_joints_update.connect(boost::bind(&CARoS_ros_interfaceApp::updateJoints,this));
 	yarp_upperlimb->sig_vision_update.connect(boost::bind(&CARoS_ros_interfaceApp::updateVision,this));
 	
@@ -468,6 +469,22 @@ void CARoS_ros_interfaceApp::updateVisionValues()
 	}// while
 }
 
+void CARoS_ros_interfaceApp::setJoints(std::vector<float>& arr_vel)
+{
+	/*
+	CString str("Velocities: ");
+	for(size_t i = 0; i < arr_vel.size(); ++i)
+	{
+		CString tmp_str; tmp_str.Format(_T("%g "), arr_vel.at(i));
+		str = str +tmp_str;
+		
+	}
+	main_dlg.addLogLine(str);
+	*/
+	if(b_yarp_upperlimb_states && b_ros_connected && !arr_vel.empty()){
+		this->yarp_upperlimb->setRightVelocities(arr_vel);
+	}
+}
 
 
 

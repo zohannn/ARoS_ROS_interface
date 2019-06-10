@@ -38,6 +38,7 @@ protected:
 	boost::thread update_joints_values_thd;
 	boost::atomic<bool> start_vision_update;
 	boost::thread update_vision_values_thd;
+	std::string topic_set_joints;
 
 
 public:

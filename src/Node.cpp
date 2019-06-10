@@ -13,6 +13,7 @@ IMPLEMENT_DYNCREATE(CNode, CWinThread)
 
 CNode::CNode()
 {
+	connected=false;
 	// logging
     //init_log();
     //logging::add_common_attributes();
@@ -45,12 +46,14 @@ bool CNode::on_init()
    remappings["__hostname"] = ip;
    ros::init(remappings,"ARoS");
 	if ( ! ros::master::check() ) {
+		connected=false;
 		return false;
 	}
     ros::start();
     //start();
 	ResumeThread();
 	//WaitForSingleObject(m_hThread,INFINITE); // wait and do not go to run()
+	connected=true;
 	return true;
 }
 
@@ -62,12 +65,14 @@ bool CNode::on_init(CString master,CString ip)
 	remappings["__hostname"] = CT2A(ip);
 	ros::init(remappings,"ARoS");
 	if ( ! ros::master::check() ) {
+		connected=false;
 		return false;
 	}
     ros::start();
     //start();
 	ResumeThread();
 	//WaitForSingleObject(m_hThread,INFINITE); // wait and do not go to run()
+	connected=true;
 	return true;
 }
 
@@ -75,10 +80,17 @@ bool CNode::on_end()
 {
 	if(ros::isStarted()){
 		ros::shutdown();
+		connected=false;
 		return ros::isShuttingDown();
 	}else{
+		connected=false;
 		return true;
 	}
+}
+
+bool CNode::isConnected()
+{
+	return this->connected;
 }
 
 int CNode::Run()
@@ -462,6 +474,34 @@ void CNode::advertise(std::string topic)
 
 }
 */
+
+void CNode::subscribeSetJoints(std::string topic)
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	this->subJoints = handle_node.subscribe(topic,1,&CNode::SetJointsCallback,this);
+}
+
+void CNode::unsubscribeSetJoints()
+{
+	this->subJoints.shutdown();
+}
+
+
+void CNode::SetJointsCallback(const std_msgs::Float32MultiArray::ConstPtr& arr)
+{
+	/*
+	float arr_vel[11];
+	int i=0;
+	for(std::vector<float>::const_iterator it = arr->data.begin(); it != arr->data.end(); ++it)
+	{
+		arr_vel[i] = *it;
+		i++;
+	}
+	*/
+	std::vector<float> arr_vel(arr->data.begin(),arr->data.end());
+	sig_joints(arr_vel);	
+}
+
 
 void CNode::advertiseRedColumn(boost::shared_ptr<Object> obj, std::string topic)
 {
