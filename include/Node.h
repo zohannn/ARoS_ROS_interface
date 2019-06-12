@@ -11,6 +11,7 @@
 #include <std_msgs\MultiArrayDimension.h>
 #include <std_msgs\MultiArrayLayout.h>
 #include <std_msgs\Float32MultiArray.h>
+#include <std_srvs\OpenClose_BH.h>
 
 // Boost Logging
 #include <boost/log/core.hpp>
@@ -65,6 +66,7 @@ public:
 	//void advertise(std::string topic);
 	boost::signal< void(CString) > sig_log;
 	boost::signal< void(std::vector<float>&) > sig_joints;
+	boost::signal< bool(bool) > sig_open_close;
 	//ros::Publisher getPublisher();
 
 	// red column publishing
@@ -98,6 +100,8 @@ public:
 
 	bool isConnected();
 
+	void advertiseSrvOpenCloseBH();
+
 protected:
 	const char * WinGetEnv(const char * name);
 	DECLARE_MESSAGE_MAP()
@@ -123,6 +127,12 @@ private:
 
 	// subscriber set_real_joints;
 	ros::Subscriber subJoints;
+
+	// service to open/close the Barrett Hand
+	ros::ServiceServer srvOpenClose;
+
+	bool open_close_BH(std_srvs::OpenClose_BH::Request &req,
+						std_srvs::OpenClose_BH::Response &res);
 
 };
 

@@ -71,6 +71,7 @@ CARoS_ros_interfaceApp::CARoS_ros_interfaceApp()
 	// signals
 	ros_node->sig_log.connect(boost::bind(&CARoS_ros_interfaceDlg::addLogLine,&main_dlg,_1));
 	ros_node->sig_joints.connect(boost::bind(&CARoS_ros_interfaceApp::setJoints,this,_1));
+	ros_node->sig_open_close.connect(boost::bind(&CARoS_ros_interfaceApp::open_close_BH,this,_1));
 	yarp_upperlimb->sig_joints_update.connect(boost::bind(&CARoS_ros_interfaceApp::updateJoints,this));
 	yarp_upperlimb->sig_vision_update.connect(boost::bind(&CARoS_ros_interfaceApp::updateVision,this));
 	
@@ -214,6 +215,7 @@ void CARoS_ros_interfaceApp::OnRosConnect()
 	if(b_ros_connected)
 	{
 		status = _T("Node is connected to the ROS Master");
+		this->ros_node->advertiseSrvOpenCloseBH();
 	}else
 	{
 		status = _T("Node is NOT connected to the ROS Master");
@@ -483,6 +485,17 @@ void CARoS_ros_interfaceApp::setJoints(std::vector<float>& arr_vel)
 	*/
 	if(b_yarp_upperlimb_states && b_ros_connected && !arr_vel.empty()){
 		this->yarp_upperlimb->setRightVelocities(arr_vel);
+		//std::vector<float> arr_hand_pos(arr_vel.end() - 4, arr_vel.end());
+		//this->yarp_upperlimb->moveRightHandFingers(arr_hand_pos);
+	}
+}
+
+bool CARoS_ros_interfaceApp::open_close_BH(bool close)
+{
+	if(close){
+		return this->yarp_upperlimb->closeRightHand();
+	}else{
+		return this->yarp_upperlimb->openRightHandHome();
 	}
 }
 

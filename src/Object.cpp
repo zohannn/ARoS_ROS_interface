@@ -207,7 +207,9 @@ Matrix3f Object::getTarRot()
 void Object::setPos(std::vector<float>& obj_pos)
 {
 	Vector3f obj_ppos(obj_pos.data());
-	Vector3f obj_pppos = this->RotMat_obj*this->RotMat_w*obj_ppos;
+	//Vector3f obj_pppos = this->RotMat_obj*this->RotMat_w*obj_ppos;
+	//Vector3f obj_pppos = this->RotMat_w*obj_ppos;
+	Vector3f obj_pppos = obj_ppos;
 	VectorXf::Map(&this->obj_pos[0], obj_pppos.size()) = obj_pppos;
 	this->tar_pos = this->obj_pos;
 }
@@ -229,13 +231,16 @@ void Object::setOr(std::vector<float>& obj_or)
     Rot(1,0) = sin(roll)*cos(pitch);  Rot(1,1) = cos(roll)*cos(yaw)+sin(roll)*sin(pitch)*sin(yaw); Rot(1,2) = sin(roll)*sin(pitch)*cos(yaw)-cos(roll)*sin(yaw);
     Rot(2,0) = -sin(pitch);           Rot(2,1) = cos(pitch)*sin(yaw);                              Rot(2,2) = cos(pitch)*cos(yaw);
 	
+	this->obj_rot = Rot;
 	this->obj_rot = this->RotMat_obj*this->RotMat_w*Rot;
+	//this->obj_rot = this->RotMat_w*Rot;
 	Vector3f rpy = this->obj_rot.eulerAngles(2, 1, 0);
 	this->obj_rpy_or.resize(rpy.size());
 	VectorXf::Map(&this->obj_rpy_or[0], rpy.size()) = rpy*RAD_TO_DEG_F;
 	this->obj_q_or = this->obj_rot;
 
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
+	//this->tar_rot = this->obj_rot;
 	this->tar_q_or = this->tar_rot;
 	Vector3f tar_rpy = this->tar_q_or.toRotationMatrix().eulerAngles(2, 1, 0);
 	this->tar_rpy_or.resize(tar_rpy.size());

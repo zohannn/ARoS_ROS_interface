@@ -558,6 +558,19 @@ void CNode::advertiseJoints(Joint_States& jstate, std::string topic)
 	AfxBeginThread(publishJoints,this);
 }
 
+void CNode::advertiseSrvOpenCloseBH()
+{
+	ros::NodeHandle handle_node; // handle of the ROS node
+	CT2CA pszConvertedAnsiString (this->node_name); std::string node_name_str(pszConvertedAnsiString);
+	this->srvOpenClose = handle_node.advertiseService("/"+node_name_str+"/open_close_BH_srv", &CNode::open_close_BH,this);
+}
+
+bool CNode::open_close_BH(std_srvs::OpenClose_BH::Request &req, std_srvs::OpenClose_BH::Response &res)
+{
+	res.success = sig_open_close(req.close);
+	return res.success;
+}
+
 
 BEGIN_MESSAGE_MAP(CNode, CWinThread)
 END_MESSAGE_MAP()

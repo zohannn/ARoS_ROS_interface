@@ -275,12 +275,12 @@ bool CYarpCommInterface::parkRightUpperLimb()
 	//Hand
 	park_posture.at(7) = 0.0f*DEG_TO_RAD_F; // joint 8
 
-	park_posture.at(8) = 58.0f*DEG_TO_RAD_F; // joint 9
-	park_posture.at(9) = 58.0f*DEG_TO_RAD_F; // joint 10
-	park_posture.at(10) = 58.0f*DEG_TO_RAD_F; // joint 11
-	//park_posture.at(8) = 69.958117f*DEG_TO_RAD_F; // joint 9
-	//park_posture.at(9) = 69.958117f*DEG_TO_RAD_F; // joint 10
-	//park_posture.at(10) = 69.958117f*DEG_TO_RAD_F; // joint 11
+	//park_posture.at(8) = 58.0f*DEG_TO_RAD_F; // joint 9
+	//park_posture.at(9) = 58.0f*DEG_TO_RAD_F; // joint 10
+	//park_posture.at(10) = 58.0f*DEG_TO_RAD_F; // joint 11
+	park_posture.at(8) = 69.958117f*DEG_TO_RAD_F; // joint 9
+	park_posture.at(9) = 69.958117f*DEG_TO_RAD_F; // joint 10
+	park_posture.at(10) = 69.958117f*DEG_TO_RAD_F; // joint 11
 
 	
 
