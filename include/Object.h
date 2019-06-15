@@ -42,7 +42,7 @@ public:
 	//setters
 	void setPos(std::vector<float>& obj_pos);
 	void setSize(std::vector<float>& obj_size);
-	void setOr(std::vector<float>& obj_or);
+	void setOr(Matrix3f& Rot);
 	void setLowPassFilters(float freq_pos, float dt_pos,float freq_or, float dt_or);
 	//void setQOr(Quaternionf& q);
 	//void setRot(Matrix3f& Rot);

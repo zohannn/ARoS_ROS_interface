@@ -12,12 +12,15 @@ Object::Object()
 	this->obj_rot = this->obj_q_or.toRotationMatrix();
 	Vector3f obj_rpy = this->obj_q_or.toRotationMatrix().eulerAngles(2, 1, 0);
 	VectorXf::Map(&this->obj_rpy_or[0], obj_rpy.size()) = obj_rpy;
+	// from the Rui's world frame to mine
 	this->RotMat_w << -1,0,0,
 						0,-1,0,
 						0,0,1;
-	this->RotMat_obj << 0,0,1,
-						0,1,0,
-						-1,0,0;
+	// from mine world frame to the object frame
+	this->RotMat_obj << 0,0,-1,
+						0,-1,0,
+						1,0,0;
+	// from the object frame to the target frame
 	this->RotMat_obj_tar << 0,0,-1,
 							0,1,0,
 							1,0,0;
@@ -58,12 +61,15 @@ Object::Object(int type, std::string name,std::vector<float>& obj_size)
 	this->obj_rot = this->obj_q_or.toRotationMatrix();
 	Vector3f obj_rpy = this->obj_q_or.toRotationMatrix().eulerAngles(2, 1, 0);
 	VectorXf::Map(&this->obj_rpy_or[0], obj_rpy.size()) = obj_rpy;
+	// from the Rui's world frame to mine
 	this->RotMat_w << -1,0,0,
 						0,-1,0,
 						0,0,1;
-	this->RotMat_obj << 0,0,1,
-						0,1,0,
-						-1,0,0;
+	// from mine world frame to the object frame
+	this->RotMat_obj << 0,0,-1,
+						0,-1,0,
+						1,0,0;
+	// from the object frame to the target frame
 	this->RotMat_obj_tar << 0,0,-1,
 							0,1,0,
 							1,0,0;
@@ -217,8 +223,9 @@ void Object::setSize(std::vector<float>& obj_size)
 	this->obj_size = obj_size;
 }
 
-void Object::setOr(std::vector<float>& obj_or)
+void Object::setOr(Matrix3f& Rot)
 {
+	/*
 	float roll=obj_or.at(0)*DEG_TO_RAD_F;
 	float pitch=obj_or.at(1)*DEG_TO_RAD_F;
 	float yaw=obj_or.at(2)*DEG_TO_RAD_F;
@@ -228,8 +235,9 @@ void Object::setOr(std::vector<float>& obj_or)
     Rot(0,0) = cos(roll)*cos(pitch);  Rot(0,1) = cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw); Rot(0,2) = sin(roll)*sin(yaw)+cos(roll)*sin(pitch)*cos(yaw);
     Rot(1,0) = sin(roll)*cos(pitch);  Rot(1,1) = cos(roll)*cos(yaw)+sin(roll)*sin(pitch)*sin(yaw); Rot(1,2) = sin(roll)*sin(pitch)*cos(yaw)-cos(roll)*sin(yaw);
     Rot(2,0) = -sin(pitch);           Rot(2,1) = cos(pitch)*sin(yaw);                              Rot(2,2) = cos(pitch)*cos(yaw);
-	
-	this->obj_rot = this->RotMat_w*Rot;
+	*/
+	this->obj_rot = this->RotMat_obj*this->RotMat_w*Rot;
+	//this->obj_rot = this->RotMat_w*Rot;
 	Vector3f rpy = this->obj_rot.eulerAngles(2, 1, 0);
 	this->obj_rpy_or.resize(rpy.size());
 	VectorXf::Map(&this->obj_rpy_or[0], rpy.size()) = rpy*RAD_TO_DEG_F;

@@ -744,7 +744,7 @@ bool CYarpCommInterface::getObjectOr(int type)
 {
 	//this->object_type = type;
 	CMessage msgOut;
-	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE;
+	msgOut.uCommand = VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_MATRIX_OBJECT_TYPE;
 	msgOut.uParam.resize(1);
 	msgOut.fData.resize(0);
 	msgOut.uParam[0]=type;
@@ -775,7 +775,8 @@ void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *priva
 {
 	b_error = false;
 	std::vector<float> obj_pos(3,0.0);
-	std::vector<float> obj_or(3,0.0);
+	//std::vector<float> obj_or(3,0.0);
+	Matrix3f Rot_mat;
 
 	switch(msgIn.uCommand)
 	{
@@ -813,25 +814,25 @@ void CYarpCommInterface::Process( CMessage &msgIn, CMessage &msgOut, void *priva
 				break;
 		}
 		break;
-	case VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_OBJECT_TYPE+ACK:
+	case VISION_BOT_Command::VISION_BOT_GET_ORIENTATION_MATRIX_OBJECT_TYPE+ACK:
 		if( msgIn.fData.size() < 1 ){break;}
 		this->object_type=msgIn.fData[0]; 
-		obj_or.at(0)=msgIn.fData[1];
-		obj_or.at(1)=msgIn.fData[2];
-		obj_or.at(2)=msgIn.fData[3];  
+		Rot_mat(0,0)=msgIn.fData[1]; Rot_mat(0,1)=msgIn.fData[4]; Rot_mat(0,2)=msgIn.fData[7];
+		Rot_mat(1,0)=msgIn.fData[2]; Rot_mat(1,1)=msgIn.fData[5]; Rot_mat(1,2)=msgIn.fData[8];
+		Rot_mat(2,0)=msgIn.fData[3]; Rot_mat(2,1)=msgIn.fData[6]; Rot_mat(2,2)=msgIn.fData[9]; 
 		switch(this->object_type)
 		{
 			case OBJECT_COLUMN_1: // green column
-				this->green_column->setOr(obj_or);
+				this->green_column->setOr(Rot_mat);
 				break;
 			case OBJECT_COLUMN_2: // red column
-				this->red_column->setOr(obj_or);
+				this->red_column->setOr(Rot_mat);
 				break;
 			case OBJECT_COLUMN_3: // magenta column
-				this->magenta_column->setOr(obj_or);
+				this->magenta_column->setOr(Rot_mat);
 				break;
 			case OBJECT_COLUMN_4: // blue column
-				this->blue_column->setOr(obj_or);
+				this->blue_column->setOr(Rot_mat);
 				break;
 		}
 		break;
