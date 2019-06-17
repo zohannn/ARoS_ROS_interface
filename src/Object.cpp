@@ -21,9 +21,15 @@ Object::Object()
 						0,-1,0,
 						1,0,0;
 	// from the object frame to the target frame
+	/*
 	this->RotMat_obj_tar << 0,0,-1,
 							0,1,0,
 							1,0,0;
+	*/
+	this->RotMat_obj_tar << 0,0,-1,
+							0.707,0.707,0,
+							0.707,0.707,0;
+
 	this->tar_pos = this->obj_pos;
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
 	this->tar_q_or = this->tar_rot;
@@ -70,9 +76,14 @@ Object::Object(int type, std::string name,std::vector<float>& obj_size)
 						0,-1,0,
 						1,0,0;
 	// from the object frame to the target frame
+	/*
 	this->RotMat_obj_tar << 0,0,-1,
 							0,1,0,
 							1,0,0;
+	*/
+	this->RotMat_obj_tar << 0,0,-1,
+							0.707,0.707,0,
+							0.707,0.707,0;
 	this->tar_pos = this->obj_pos;
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
 	this->tar_q_or = this->tar_rot;
