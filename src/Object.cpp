@@ -26,9 +26,15 @@ Object::Object()
 							0,1,0,
 							1,0,0;
 	*/
-	this->RotMat_obj_tar << 0,0,-1,
-							0.707,0.707,0,
-							0.707,0.707,0;
+	this->RotMat_obj_tar << 0.0,-0.707,-0.707,
+							0.0,0.707,-0.707,
+							1.0,0.0,0.0;
+
+	//this->tar_pos_off << 15,-20,-80;
+	this->tar_pos_off << 15,90,-20;
+
+	this->tar_or_q_off.resize(4); this->tar_or_q_off << -0.08,0.06,0.07,0.07;
+							
 
 	this->tar_pos = this->obj_pos;
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
@@ -81,9 +87,16 @@ Object::Object(int type, std::string name,std::vector<float>& obj_size)
 							0,1,0,
 							1,0,0;
 	*/
-	this->RotMat_obj_tar << 0,0,-1,
-							0.707,0.707,0,
-							0.707,0.707,0;
+		
+	//this->tar_pos_off << 15,-20,-80;
+	this->tar_pos_off << 15,90,-20;
+
+	this->tar_or_q_off.resize(4); this->tar_or_q_off << -0.08,0.06,0.07,0.07;
+
+	this->RotMat_obj_tar << 0.0,-0.707,-0.707,
+							0.0,0.707,-0.707,
+							1.0,0.0,0.0;
+							
 	this->tar_pos = this->obj_pos;
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
 	this->tar_q_or = this->tar_rot;
@@ -124,6 +137,8 @@ Object::Object(const Object& other)
 	this->tar_rpy_or = other.tar_rpy_or; 
 	this->tar_q_or = other.tar_q_or;
 	this->tar_rot = other.tar_rot;
+	this->tar_pos_off = other.tar_pos_off;
+	this->tar_or_q_off = other.tar_or_q_off;
 
 	this->lpf_obj_pos_x = other.lpf_obj_pos_x;
 	this->lpf_obj_pos_y = other.lpf_obj_pos_y;
@@ -226,7 +241,8 @@ void Object::setPos(std::vector<float>& obj_pos)
 	Vector3f obj_ppos(obj_pos.data());
 	Vector3f obj_pppos = this->RotMat_w*obj_ppos;
 	VectorXf::Map(&this->obj_pos[0], obj_pppos.size()) = obj_pppos;
-	this->tar_pos = this->obj_pos;
+	Vector3f tar_pppos = this->tar_pos_off + this->RotMat_w*obj_ppos;
+	VectorXf::Map(&this->tar_pos[0], tar_pppos.size()) = tar_pppos;
 }
 
 void Object::setSize(std::vector<float>& obj_size)
@@ -256,6 +272,10 @@ void Object::setOr(Matrix3f& Rot)
 
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
 	this->tar_q_or = this->tar_rot;
+	this->tar_q_or.x() = this->tar_q_or.x() + tar_or_q_off(0);
+	this->tar_q_or.y() = this->tar_q_or.y() + tar_or_q_off(1);
+	this->tar_q_or.z() = this->tar_q_or.z() + tar_or_q_off(2);
+	this->tar_q_or.w() = this->tar_q_or.w() + tar_or_q_off(3);
 	Vector3f tar_rpy = this->tar_q_or.toRotationMatrix().eulerAngles(2, 1, 0);
 	this->tar_rpy_or.resize(tar_rpy.size());
 	VectorXf::Map(&this->tar_rpy_or[0], tar_rpy.size()) = tar_rpy;

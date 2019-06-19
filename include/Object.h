@@ -82,6 +82,8 @@ private:
 	std::vector<float> tar_rpy_or; 
 	Quaternionf tar_q_or;
 	Matrix3f tar_rot;
+	Vector3f tar_pos_off;
+	VectorXf tar_or_q_off;
 
 };
 
