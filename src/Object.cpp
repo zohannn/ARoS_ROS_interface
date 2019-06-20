@@ -30,10 +30,18 @@ Object::Object()
 							0.0,0.707,-0.707,
 							1.0,0.0,0.0;
 
-	//this->tar_pos_off << 15,-20,-80;
-	this->tar_pos_off << 15,90,-20;
+	this->tar_pos_off << 15,-15,-80;
+	//this->tar_pos_off << 15,90,-20;
 
-	this->tar_or_q_off.resize(4); this->tar_or_q_off << -0.08,0.06,0.07,0.07;
+	this->tar_or_q_off.resize(4);
+	this->tar_or_q_off << 0.0,0.03,-0.01,0.03;
+	//this->tar_or_q_off << 0.0,0.0,0.0,0.0;
+
+	this->x_ref << 0.0,0.0,1.0;
+
+	//this->tar_rot_rec << 0,0,0,
+	//					0,0,0,
+	//					0,0,0;
 							
 
 	this->tar_pos = this->obj_pos;
@@ -88,14 +96,22 @@ Object::Object(int type, std::string name,std::vector<float>& obj_size)
 							1,0,0;
 	*/
 		
-	//this->tar_pos_off << 15,-20,-80;
-	this->tar_pos_off << 15,90,-20;
+	this->tar_pos_off << 15,-15,-80;
+	//this->tar_pos_off << 15,90,-20;
 
-	this->tar_or_q_off.resize(4); this->tar_or_q_off << -0.08,0.06,0.07,0.07;
+	this->tar_or_q_off.resize(4); 
+	this->tar_or_q_off << 0.0,0.03,-0.01,0.03;
+	//this->tar_or_q_off << 0.0,0.0,0.0,0.0;
 
 	this->RotMat_obj_tar << 0.0,-0.707,-0.707,
 							0.0,0.707,-0.707,
 							1.0,0.0,0.0;
+
+	this->x_ref << 0.0,0.0,1.0;
+
+	//this->tar_rot_rec << 0,0,0,
+	//					0,0,0,
+	//					0,0,0;
 							
 	this->tar_pos = this->obj_pos;
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
@@ -137,8 +153,10 @@ Object::Object(const Object& other)
 	this->tar_rpy_or = other.tar_rpy_or; 
 	this->tar_q_or = other.tar_q_or;
 	this->tar_rot = other.tar_rot;
+	//this->tar_rot_rec = other.tar_rot_rec;
 	this->tar_pos_off = other.tar_pos_off;
 	this->tar_or_q_off = other.tar_or_q_off;
+	this->x_ref = other.x_ref;
 
 	this->lpf_obj_pos_x = other.lpf_obj_pos_x;
 	this->lpf_obj_pos_y = other.lpf_obj_pos_y;
@@ -214,10 +232,18 @@ Quaternionf Object::getQOr()
 Quaternionf Object::getTarQOr()
 {
 	Quaternionf q;
-	q.x() = this->lpf_tar_qor_x->update(this->tar_q_or.x());
-	q.y() = this->lpf_tar_qor_y->update(this->tar_q_or.y());
-	q.z() = this->lpf_tar_qor_z->update(this->tar_q_or.z());
-	q.w() = this->lpf_tar_qor_w->update(this->tar_q_or.w());
+	Vector3f tar_x_vec =this->tar_rot.col(0);
+	if(abs(this->x_ref.dot(tar_x_vec))<0.15){
+		q.x() = this->tar_q_or.x();
+		q.y() = this->tar_q_or.y();
+		q.z() = this->tar_q_or.z();
+		q.w() = this->tar_q_or.w();
+	}else{
+		q.x() = this->lpf_tar_qor_x->update(this->tar_q_or.x());
+		q.y() = this->lpf_tar_qor_y->update(this->tar_q_or.y());
+		q.z() = this->lpf_tar_qor_z->update(this->tar_q_or.z());
+		q.w() = this->lpf_tar_qor_w->update(this->tar_q_or.w());
+	}
 	return q;
 }
 
@@ -271,11 +297,22 @@ void Object::setOr(Matrix3f& Rot)
 	this->obj_q_or = this->obj_rot;
 
 	this->tar_rot = this->RotMat_obj_tar*this->obj_rot;
-	this->tar_q_or = this->tar_rot;
-	this->tar_q_or.x() = this->tar_q_or.x() + tar_or_q_off(0);
-	this->tar_q_or.y() = this->tar_q_or.y() + tar_or_q_off(1);
-	this->tar_q_or.z() = this->tar_q_or.z() + tar_or_q_off(2);
-	this->tar_q_or.w() = this->tar_q_or.w() + tar_or_q_off(3);
+
+	Vector3f tar_x_vec =this->tar_rot.col(0);
+
+	if(abs(this->x_ref.dot(tar_x_vec))<0.15){
+		this->tar_rot(0,0)=0.707;  this->tar_rot(0,1)=0.0; this->tar_rot(0,2)=-0.707;
+		this->tar_rot(1,0)=-0.707; this->tar_rot(1,1)=0.0; this->tar_rot(1,2)=-0.707;
+		this->tar_rot(2,0)= 0.0;   this->tar_rot(2,1)=1.0; this->tar_rot(2,2)=0.0;
+		this->tar_q_or = this->tar_rot;
+	}else{
+		this->tar_q_or = this->tar_rot;
+		this->tar_q_or.x() = this->tar_q_or.x() + tar_or_q_off(0);
+		this->tar_q_or.y() = this->tar_q_or.y() + tar_or_q_off(1);
+		this->tar_q_or.z() = this->tar_q_or.z() + tar_or_q_off(2);
+		this->tar_q_or.w() = this->tar_q_or.w() + tar_or_q_off(3);
+	}
+
 	Vector3f tar_rpy = this->tar_q_or.toRotationMatrix().eulerAngles(2, 1, 0);
 	this->tar_rpy_or.resize(tar_rpy.size());
 	VectorXf::Map(&this->tar_rpy_or[0], tar_rpy.size()) = tar_rpy;

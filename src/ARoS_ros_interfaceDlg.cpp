@@ -1397,6 +1397,7 @@ void CARoS_ros_interfaceDlg::onBnClickedExecTask()
 	if(success){addLogLine(_T("Task executed with success"));}else{addLogLine(_T("Task NOT executed"));}
 }
 
+
  void CARoS_ros_interfaceDlg::divideTask(unsigned int n_micro_steps)
  {
 	if(n_micro_steps>0){
