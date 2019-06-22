@@ -26,15 +26,15 @@ Object::Object()
 							0,1,0,
 							1,0,0;
 	*/
-	this->RotMat_obj_tar << 0.0,-0.707,-0.707,
-							0.0,0.707,-0.707,
+	this->RotMat_obj_tar << 0.0,-0.707,0.707,
+							0.0,0.707,0.707,
 							1.0,0.0,0.0;
 
-	this->tar_pos_off << 15,-15,-80;
+	this->tar_pos_off << 20,-135,-150;
 	//this->tar_pos_off << 15,90,-20;
 
 	this->tar_or_q_off.resize(4);
-	this->tar_or_q_off << 0.0,0.03,-0.01,0.03;
+	this->tar_or_q_off << -0.02,0.0,-0.06,0.0;
 	//this->tar_or_q_off << 0.0,0.0,0.0,0.0;
 
 	this->x_ref << 0.0,0.0,1.0;
@@ -96,15 +96,15 @@ Object::Object(int type, std::string name,std::vector<float>& obj_size)
 							1,0,0;
 	*/
 		
-	this->tar_pos_off << 15,-15,-80;
+	this->tar_pos_off << 20,-135,-150;
 	//this->tar_pos_off << 15,90,-20;
 
-	this->tar_or_q_off.resize(4); 
-	this->tar_or_q_off << 0.0,0.03,-0.01,0.03;
+	this->tar_or_q_off.resize(4);
+	this->tar_or_q_off << -0.02,0.0,-0.06,0.0;
 	//this->tar_or_q_off << 0.0,0.0,0.0,0.0;
 
-	this->RotMat_obj_tar << 0.0,-0.707,-0.707,
-							0.0,0.707,-0.707,
+	this->RotMat_obj_tar << 0.0,-0.707,0.707,
+							0.0,0.707,0.707,
 							1.0,0.0,0.0;
 
 	this->x_ref << 0.0,0.0,1.0;
@@ -290,6 +290,7 @@ void Object::setOr(Matrix3f& Rot)
     Rot(2,0) = -sin(pitch);           Rot(2,1) = cos(pitch)*sin(yaw);                              Rot(2,2) = cos(pitch)*cos(yaw);
 	*/
 	this->obj_rot = this->RotMat_obj*this->RotMat_w*Rot;
+	if(this->obj_rot(2,2)>0.8){this->obj_rot(2,2)=-1.0;}
 	//this->obj_rot = this->RotMat_w*Rot;
 	Vector3f rpy = this->obj_rot.eulerAngles(2, 1, 0);
 	this->obj_rpy_or.resize(rpy.size());
@@ -300,7 +301,7 @@ void Object::setOr(Matrix3f& Rot)
 
 	Vector3f tar_x_vec =this->tar_rot.col(0);
 
-	if(abs(this->x_ref.dot(tar_x_vec))<0.15){
+	if(abs(this->x_ref.dot(tar_x_vec))<0.35){
 		this->tar_rot(0,0)=0.707;  this->tar_rot(0,1)=0.0; this->tar_rot(0,2)=-0.707;
 		this->tar_rot(1,0)=-0.707; this->tar_rot(1,1)=0.0; this->tar_rot(1,2)=-0.707;
 		this->tar_rot(2,0)= 0.0;   this->tar_rot(2,1)=1.0; this->tar_rot(2,2)=0.0;
