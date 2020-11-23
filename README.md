@@ -1,59 +1,45 @@
-# ARoS_ROS_interface
-This is a MFC program for ROS interface for the humanoid robot ARoS (compatibility with Windows XP and MS Visual Studio 2010)
+# ARoS ROS Interface
+This is a MFC program to inteface the humanoid robot [ARoS](https://github.com/zohannn/aros_description) with [ROS](http://wiki.ros.org/hydro) (compatibility with Windows XP, MS Visual Studio 2010 and ROS Hydro)
 
-Installation steps:
+## Installation
 
-	1. Compile and install ROS: http://gianpaologulletta.blogspot.pt/2017/06/installation-of-ros-hydro-on-windows-xp.html
+1. Install ROS Hydro on Windows XP: [https://gianpaologulletta.blogspot.com/2017/06/installation-of-ros-hydro-on-windows-xp.html](https://gianpaologulletta.blogspot.com/2017/06/installation-of-ros-hydro-on-windows-xp.html) 
+
+2. Download the [ACE wrappers](https://mega.nz/file/JCQF0KgA#qObQqMbwSJNgbdiZ93bk66CORwN1snCj281DRCuVss0) into the C:\local\ACE_wrappers folder, define the environment variables ACE_ROOT = C:\local\ACE_wrappers and ACE_LIB = %ACE_ROOT%\lib and put them in the PATH variable.
 	
-	2. Extract the ACE wrappers (https://mega.nz/#!wSoFxaCA!cpuLKVLSxyzDJSDtcCF2ZOfETHAJbn-tHniDmJA0Wio) into C:\local\ACE_wrappers.
-	Define the environment variables ACE_ROOT = C:\local\ACE_wrappers and ACE_LIB = %ACE_ROOT%\lib. Put them in the PATH.
+3. Download and install [YARP](https://mega.nz/file/YDoTCSbQ#F2HQ_iqX0SaChKvwFkGjetiOf99jBg_aHSyzhUKbAFg):
+
+	1. CMake the program in a build directory with the following options:	
 	
-	3. Compile and install YARP (https://mega.nz/#!dfZESIIB!sgKvIa3w7rOGO3quw-NvBdpl2txHDZrxBigxkEejRkM). CMake the program with the following options:
-		a. uncheck CREATE_YMANAGER
-		b. uncheck YARP_COMPILE_TESTS 
-		c. set CMAKE_INSTALL_PREFIX = C:\local\YARP
-	Define the environment variable YARP_ROOT = C:\local\YARP and put %YARP_ROOT%\bin %YARP_ROOT%\include and %YARP_ROOT%\lib in the  PATH
-	Compile and install YARP with visual studio 2010.
-	
-	2. Download the serial port drivers (https://mega.nz/#!kS4iHTSC!FMfBAI2wxRQZj8LiDA2L6SfS7yTwFhPARnennLDiCnQ) under C:\serial_asio. 
-	Define the environment variableS SERIAL_ASIO_ROOT=C:\serial_asio\install, SERIAL_ASIO_INCLUDE=%SERIAL_ASIO_ROOT%\include and SERIAL_ASIO_LIB=%SERIAL_ASIO_ROOT%\lib. Put them in the path. 
-	
-	3. Download the stereo vision drivers (https://mega.nz/#!QSwVhT7Q!9kSTWxG4t9LxnZVy1nfJwgpVeilQ08olBzYeqzBhJmc) under C:\SVS44.
-	Define the environment variables SVS_ROOT=C:/SVS44 and put it in the path.	
-	
-	4. Download the amtec arm drivers (https://mega.nz/#!tL4jmbSQ!7-hTHxfd9XbwhIQouJTHFghB5ZCitIadYYv9KgWZE2s) under C:\amtec_lwa_7dof.
-	Define the environment variableS AMTEC_LWA_7DOF_ROOT=C:\amtec_lwa_7dof, AMTEC_LWA_7DOF_INCLUDE=%AMTEC_LWA_7DOF_ROOT%\include and AMTEC_LWA_7DOF_LIB=%AMTEC_LWA_7DOF_ROOT%\lib. Put them in the path. 
-	
-	5. Download the pantilt drivers (https://mega.nz/#!dPgnxLBZ!oKazvrYDtuKk49chPH0LXacEBJIP0LSxsQS1w3z_2SM) under C:\pantilt_ptud46.
-	Define the environment variableS PANTILT_PTUD46_ROOT=C:\pantilt_ptud46\install, PANTILT_PTUD46_INCLUDE=%PANTILT_PTUD46_ROOT%\include and PANTILT_PTUD46_LIB=%PANTILT_PTUD46_ROOT%\lib. Put them in the path. 	
-	
-	6. Extract the intel IPP (https://mega.nz/#!IfZCwDqZ!JXKSSIR8HUCLhWTb2e4P8NPYz-floaWpZL85-8nJKlI) under C:\local\Intel and set the environment variable IPP_ROOT = C:\local\Intel\IPP\6.1.2.041\ia32.
-	
-	7. Extract the OpenCV libraries (https://mega.nz/#!lXoz3RQT!-iyRqhZGrvqJnUrlz__ef2dUOaBCwl9UuhNctIGD9-E) under C:\local\opencv and set the environmental variables OPENCV_ROOT=C:\local\opencv, OPENCV_BIN=%OPENCV_ROOT%\bin, 
-		OPENCV_LIB = %OPENCV_ROOT%\lib, OPENCV_INCLUDE = %OPENCV_ROOT%\include. Put them in the PATH.
+		- uncheck CREATE_YMANAGER
 		
-	8. Clone the dependencies (https://github.com/zohannn/ARoS_ROS_interface_DEPS) under C:/ARoS_ROS_interface_DEPS and define the environment variable MAINPROJECT = C:/ARoS_ROS_interface_DEPS.
-	9. Compile in Release 
+		- uncheck YARP_COMPILE_TESTS 
+		
+		- set CMAKE_INSTALL_PREFIX = C:\local\YARP
+		
+	2. Compile and install YARP with visual studio 2010.
+	3. Define the environment variable YARP_ROOT = C:\local\YARP and put %YARP_ROOT%\bin %YARP_ROOT%\include and %YARP_ROOT%\lib in the PATH variable.
 	
-	How to Debug in Release mode? (https://stackoverflow.com/questions/11253334/how-to-debug-in-release-mode)
 	
-	In VS, right click your project, chose "Properties".
+4. Download the [serial port drivers](https://mega.nz/file/cColSKxI#bExDoFvs8CU4ZLX0jI1jW-uchnmkg9lZvdanm64PZq4) under C:\serial_asio folder. 
+	Define the environment variableS SERIAL_ASIO_ROOT=C:\serial_asio\install, SERIAL_ASIO_INCLUDE=%SERIAL_ASIO_ROOT%\include, SERIAL_ASIO_LIB=%SERIAL_ASIO_ROOT%\lib and put them in the PATH variable. 
+	
+5. Download the [stereo vision drivers](https://mega.nz/file/MfxR0ApQ#mpIefkK0pOwlzuM8s6ZcI4tAnNiLzPK9NnmNa7-Ek-E) under the C:\SVS44 folder.
+	Define the environment variables SVS_ROOT=C:/SVS44 and put it in the PATH variable.	
+	
+6. Download the [amtec arm drivers](https://mega.nz/file/UDxFxCBA#t8fpfAAVXjZgwVcaHMsbn18srr2rjCRUFXsGWiYyK6g) under the C:\amtec_lwa_7dof folder.
+	Define the environment variableS AMTEC_LWA_7DOF_ROOT=C:\amtec_lwa_7dof, AMTEC_LWA_7DOF_INCLUDE=%AMTEC_LWA_7DOF_ROOT%\include, AMTEC_LWA_7DOF_LIB=%AMTEC_LWA_7DOF_ROOT%\lib and put them in the PATH variable. 
+	
+7. Download the [pantilt drivers](https://mega.nz/file/sLZS2ZYI#ufL0qi6C_D0Lz1ImMqKRepgnVMVvZrC4qyVhuwMU3s0) under the C:\pantilt_ptud46 folder.
+	Define the environment variableS PANTILT_PTUD46_ROOT=C:\pantilt_ptud46\install, PANTILT_PTUD46_INCLUDE=%PANTILT_PTUD46_ROOT%\include, PANTILT_PTUD46_LIB=%PANTILT_PTUD46_ROOT%\lib and put them in the PATH variable. 	
+	
+6. Download the [intel drivers](https://mega.nz/file/lSgiyCjb#TqJcQb-fDuHzZUnemy36doHhcvy-_CjcGR4c3g1PkFk) under the C:\local\Intel folder and set the environment variable IPP_ROOT = C:\local\Intel\IPP\6.1.2.041\ia32.
+	
+7. Download the [OpenCV libraries](https://mega.nz/file/0K5Uiaob#66FNPhh8N3yZtQO0TDi-ckkue330SBO2zposDnSvCtw) under the C:\local\opencv folder, set the environmental variables OPENCV_ROOT=C:\local\opencv, OPENCV_BIN=%OPENCV_ROOT%\bin, OPENCV_LIB = %OPENCV_ROOT%\lib, OPENCV_INCLUDE = %OPENCV_ROOT%\include and put them in the PATH variable.
+		
+8. Clone the [dependencies](https://github.com/zohannn/ARoS_ROS_interface_DEPS) under the C:\ARoS_ROS_interface_DEPS folder and define the environment variable MAINPROJECT = C:\ARoS_ROS_interface_DEPS.
 
-    Click the C/C++ node. Set Debug Information Format to C7 compatible (/Z7) or Program Database (/Zi).
-
-    Expand Linker and click the General node. Set Enable Incremental Linking to No (/INCREMENTAL:NO).
-
-    Select the Debugging node. Set Generate Debug Info to Yes (/DEBUG).
-
-    Select the Optimization node. Set References to Yes (/OPT:REF).
-
-        if /OPT:REF is specified, /OPT:ICF is on by default.
-
-That's ripped directly from Microsoft's documentation:
-
-    How to: Debug a Release Build
-    OPT Optimizations
-
-I do this all of the time and pretty much never debug in debug mode anymore. As you know, many errors that occur in a release build may not occur in a debug build (almost certainly the errors that arise from invoking UB).
-
-Also, I work on a project which uses a ton of image processing and performs a lot of compression/decompression of large images. Using a slow debug build is simply impractical.
+9. Compile in Release mode.
+	
+	See [how to Debug in Release mode?](https://stackoverflow.com/questions/11253334/how-to-debug-in-release-mode)
+	
