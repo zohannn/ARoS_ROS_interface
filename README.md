@@ -3,7 +3,7 @@ This is a MFC program to inteface the humanoid robot [ARoS](https://github.com/z
 
 ## Installation
 
-1. Install ROS Hydro on Windows XP: [https://gianpaologulletta.blogspot.com/2017/06/installation-of-ros-hydro-on-windows-xp.html](https://gianpaologulletta.blogspot.com/2017/06/installation-of-ros-hydro-on-windows-xp.html) 
+1. Install ROS Hydro on Windows XP: [https://gianpaoloslab.blogspot.com/2017/06/installation-of-ros-hydro-on-windows-xp.html](https://gianpaoloslab.blogspot.com/2017/06/installation-of-ros-hydro-on-windows-xp.html) 
 
 2. Download the [ACE wrappers](https://mega.nz/file/JCQF0KgA#qObQqMbwSJNgbdiZ93bk66CORwN1snCj281DRCuVss0) into the C:\local\ACE_wrappers folder, define the environment variables ACE_ROOT = C:\local\ACE_wrappers and ACE_LIB = %ACE_ROOT%\lib and put them in the PATH variable.
 	
